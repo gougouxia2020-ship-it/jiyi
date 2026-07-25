@@ -1,0 +1,15 @@
+{
+  "milestone": "U3",
+  "goal": "把「用户物件平权与删除管理」这条验收标准补上一份路径正确的自动化验收脚本：新建（或把已有的自测脚本迁移改名为）e2e/u3-parity.spec.ts，让它覆盖对一件上传物件施加内置物件全部操作（拖入、挪位、缩放、旋转、写故事、重命名、跨场景故事同步）均可用且行为一致；删除该物件后两个场景的摆放一并消失、IndexedDB中对应图片记录被清除、刷新不复活；以及内置物件没有删除入口这几点，跑通后确认里程碑U3的验收命令 npx playwright test e2e/u3-parity.spec.ts --reporter=line 能找到并跑完这个文件、退出码为0。\n【验收硬指标】milestones.json U3 criteria[0] 原文：平权与管理e2e：对一件上传物件施加内置物件的全部操作（拖入/挪位/缩放/旋转/写故事/重命名/跨场景故事同步）均可用且行为一致；删除该物件后两个场景的摆放一并消失、IndexedDB中对应图片记录被清除、刷新不复活；内置物件无删除入口。对应 check 命令：npx playwright test e2e/u3-parity.spec.ts --reporter=line，expect_exit 0。success.json 原文（平权）：逐项对一件上传物件施加内置物件的全部操作，任一项不可用或行为不一致；或上传物件删不掉；或内置物件出现了删除入口，即判失败。success.json 原文（删除干净不留尸）：把同一件上传物件摆进两个场景后删除它，若任一场景仍留有该物件或其残影、或刷新后它又出现、或IndexedDB里仍查得到该图片记录，即判失败。本sprint是重拆后唯一sprint，路径必须与check.cmd参数逐字一致，别再用别的文件名。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "U3-S3",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "确认e2e/u3-parity.spec.ts存在且全仓库搜索确认旧文件u3-s1-parity-selftest.spec.ts已不存在；cwd=项目根亲手执行npx playwright test e2e/u3-parity.spec.ts --reporter=line；通读417行测试文件逐条比对验收硬指标每一点，并交叉读取gallery.ts/Workbench.tsx/ItemTray.tsx/imageStore.ts/manifest.ts验证断言站得住脚",
+      "evidence": "实跑输出3 passed (7.7s)、退出码0；IndexedDB检查用indexedDB.open+count(key)，删除前先证明idbCount===1排除假阳性，key格式img-${itemId}与源码逐字对应；delete-item按itemId过滤placements天然覆盖多场景一并清除；ItemDelete仅对source===user渲染，内置件DOM层面零删除入口；挪位/缩放/旋转断言均为只变目标字段、其余严格不变的精确约束，非弱断言",
+      "at_tick": 43
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "narrative": "本轮主动作是里程碑 N1 验收。acceptance-run 判前三条机器可判标准（生产构建、素材裁切、schema v2 e2e）均过，唯第 4 条人判条目「横版书房图对味」悬而未决，触发独立检察。检察员（独立子会话 a03fc1bea608d2656，opus 档）只看验收标准原文与三张背景图交付物（新书房图 backgrounds/reading-nook-wide-demo.jpg、已过审的 living-room-demo.jpg 与 bedroom-demo.jpg），不听团队自述：新书房图暖色调达标，但饱和度明显高于客厅与卧室两张参照图，书架彩色书脊与高饱和抱枕呈鲜艳数码直出感，缺胶片颗粒与褪色质感，与 design.md 定义的低饱和旧纸「旧信」DNA 不符、与另两张场景图不成一组。检察员定案不通过，N1 由 verifying 转 failed。",
+  "next_plan": "下一轮预检会给出复盘/重拆指示；书房图 reading-nook-wide-demo.jpg 需按 design.md 低饱和旧纸基调重新调色分级或换图素材，压低饱和度、补胶片颗粒/褪色感，再次提交 N1 验收。",
+  "decisions": [
+    "里程碑 N1 验收不通过：横版书房图饱和度过高、不成一组，判定归独立检察员"
+  ],
+  "outputs": []
+}

@@ -1,0 +1,15 @@
+{
+  "seq": 56,
+  "status": "finished",
+  "result": "awaiting-approval",
+  "action": null,
+  "started_at": "2026-07-19T02:41:56.110Z",
+  "ended_at": "2026-07-19T02:44:25.909Z",
+  "duration_seconds": 150,
+  "decisions": [
+    "两条老板亲验项按既定规矩不找人代判，请示继续挂在老板手里，等他亲自试用后拍板"
+  ],
+  "outputs": [],
+  "artifacts": [],
+  "generation": 58
+}

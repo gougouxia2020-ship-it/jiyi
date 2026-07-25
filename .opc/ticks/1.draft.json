@@ -1,0 +1,15 @@
+{
+  "narrative": "本轮把里程碑 M1 拆成两个 sprint 并批量落档：M1-S1（工程地基+数据模型+素材清单）、M1-S2（应用外壳+场景管理+视觉还原+e2e），随即执行 M1-S1。建造员搭起 Vite+React+TS 工程骨架，落地 Scene/Item/Placement 数据模型与带 SCHEMA_VERSION 的 LocalStorage 全量持久化，打包 backgrounds/ 3 张场景图与 items/ 14 件物件为素材清单（src/assets/manifest.ts），自检 npm run build exit 0，详见 receipts/M1-S1/receipt-builder.md。评审员逐条对照【验收硬指标】亲手核查（跑 build、比对字段、比对磁盘素材文件），结论 pass，详见 receipts/M1-S1/review-evidence.md，M1-S1 定稿为 done。",
+  "next_plan": "执行 M1-S2：搭应用外壳（报头+模式开关+场景条+物件抽屉+画布），接上 M1-S1 的数据模型与素材清单，实现创建/切换场景与背景不可重复约束（上限 3、用尽置灰提示），刷新后场景与布局状态完整还原，跑通 e2e/m1-shell.spec.ts，并把视觉对齐 taste/examples/A-旧信.html 与 tokens.css 的「旧信」DNA；M1-S2 定稿后若 M1 交付物齐则申报里程碑完成。",
+  "decisions": [
+    "M1 拆分为 M1-S1（地基/数据模型/素材）与 M1-S2（外壳/场景管理/视觉/e2e）两个 sprint，按 idea.json 的 B1+B2 与 B4+外壳+视觉划界，各自可独立验收"
+  ],
+  "outputs": [
+    "src/model/types.ts",
+    "src/assets/manifest.ts",
+    "src/storage/persistence.ts",
+    "src/styles/tokens.css",
+    "receipts/M1-S1/receipt-builder.md",
+    "receipts/M1-S1/review-evidence.md"
+  ]
+}

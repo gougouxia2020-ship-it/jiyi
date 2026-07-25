@@ -1,0 +1,13 @@
+{
+  "seq": 53,
+  "status": "finished",
+  "result": "awaiting-approval",
+  "action": "acceptance",
+  "started_at": "2026-07-18T23:26:38.033Z",
+  "ended_at": "2026-07-18T23:31:30.946Z",
+  "duration_seconds": 293,
+  "decisions": [],
+  "outputs": [],
+  "artifacts": [],
+  "generation": 55
+}

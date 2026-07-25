@@ -1,0 +1,15 @@
+{
+  "milestone": "N1",
+  "goal": "对已替换的横版书房场景图 backgrounds/reading-nook-wide-demo.jpg 重新调色分级：整体降低饱和度、叠加暖色偏移与胶片颗粒/暗角褪色质感，使其气质与客厅、卧室两张现有场景图成一组；图片原地替换（分辨率与朝向不变，src/assets/manifest.ts 与 dist/ 构建产物随之更新），不改动其他 13 张物件素材、不动 N2/N3/N4 范围的自适应渲染或交互逻辑。【验收硬指标】milestones.json N1 criteria 原文：「横版书房图对味：暖调胶片质感与客厅/卧室成一组，还原「旧信」气质」（manual 人工判）。上一轮独立检察员验收失败具体指出：书房图饱和度约49.8%，显著高于客厅14.7%与卧室37%，书架彩色书脊与高饱和抱枕呈鲜艳数码直出感，缺胶片颗粒/褪色质感。本 sprint 须把书房图饱和度压到与客厅14.7%、卧室37%同一量级区间内、补胶片颗粒与褪色感，三张场景图色调气质需可视为一组。design.md 原文：「暖奶油底：外层暖沙 --color-sand，应用纸面 --color-paper，卡片 --color-card。整体是低饱和的旧纸色，不用纯白。」调色须以此为基调。npm run build 生产构建仍须 exit 0，node scripts/check-asset-trim.mjs 与既有 e2e 用例不受影响须继续 exit 0。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "N1-S3",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲眼查看三图对比、独立跑Python PIL复测HSV饱和度（未抄自报数字）、独立执行npm run build/check-asset-trim.mjs/playwright全量测试、按文件mtime核查items与源码改动范围",
+      "evidence": "新图饱和度独立测得35.35%落入客厅14.96%-卧室36.97%区间且原图50.13%与上轮检察员49.8%吻合确认真实调色；build/trim/playwright三项均exit0且14 passed；items/14张PNG与所有src源码mtime均早于本sprint改动时间戳，确认未越界",
+      "at_tick": 17
+    }
+  ]
+}

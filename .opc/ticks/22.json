@@ -1,0 +1,15 @@
+{
+  "seq": 22,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-16T21:03:33.282Z",
+  "ended_at": "2026-07-16T21:20:43.041Z",
+  "duration_seconds": 1030,
+  "decisions": [
+    "独立检察员对 N2 沉浸观感人判条目定案 PASS，里程碑 N2 定稿 done"
+  ],
+  "outputs": [],
+  "artifacts": [],
+  "generation": 23
+}

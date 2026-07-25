@@ -1,0 +1,15 @@
+{
+  "milestone": "U2",
+  "goal": "把 U2-S1 做出的上传物件接入既有拖放/写故事/跨场景同步/刷新持久化全链路跑通端到端，并补齐里程碑 U2 官方验收指名的三份 e2e 测试文件，让机器验收命令能直接跑通。目标白话：上传出来的 Item 要与内置 14 件一样能被拖进场景、写故事、刷新后物件/摆放/故事全在；同时新建 e2e/u2-upload.spec.ts、e2e/u2-large-image.spec.ts、e2e/u2-seam.spec.ts 三个 Playwright 文件，逐条覆盖里程碑 U2 的三条验收标准。\n【验收硬指标】milestones.json U2 criteria[0] 原文（对应 e2e/u2-upload.spec.ts，expect_exit 0）：上传闭环 e2e：dock 选图 → 看到预览 → 确认入库 → 物件出现在 dock → 拖进场景 → 写故事 → 刷新后物件/摆放/故事全在；预览里取消则不入库、dock 无残留。criteria[1] 原文（对应 e2e/u2-large-image.spec.ts，expect_exit 0）：大图与 EXIF e2e：传一张 4000×3000 以上、EXIF orientation=6 的竖拍原图，页面不崩溃、标签页不被杀，落库图长边 ≤1600px 且显示方向正确（不躺倒）。criteria[2] 原文（对应 e2e/u2-seam.spec.ts，expect_exit 0）：处理接口是唯一插入点 e2e（本轮关键架构保证）：把一个反例实现（灰度处理器）注入该接口，不改上下游任何一行代码，上传产出的物件即变为灰度；若必须改动管线上下游/存储/UI 才能生效，即判失败。success.json 原文（上传闭环跑通）：上传闭环跑通：从 dock 选一张本机照片 → 看到预览 → 确认入库 → 它作为一件物件出现在 dock → 拖进场景摆好 → 给它写故事 → 刷新后物件、摆放、故事全在。全程不报错、不卡死。验收：三份 e2e 文件各自 npx playwright test <文件> --reporter=line 须 exit 0；npm run build 须 exit 0；全量回归不得新增此前未见的失败用例；里程碑 U2 交付物齐全后按团队流程申报 milestone-claim。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "U2-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲跑三份新e2e+npm run build+全量回归；交叉核对U2-S1/U1-S3两轮历史证据确认9个失败是跨轮基线非本轮新增；逐条读三份e2e断言与U2三条criteria字面比对；读源码核实处理接口是唯一插入点（改动仅限processor.ts自身的let化+两个setter，pipeline/normalize/add-item/persistence均未改动）；抽查Canvas/ItemTray/Workbench/gallery确认用户件与内置14件共用同一条place-item/add-item链路无平行逻辑。",
+      "evidence": "四条验收命令均exit 0；全量回归40 passed/9 failed且失败清单与U2-S1、U1-S3两轮历史证据逐条同名同因；三份e2e断言逐字段覆盖对应criteria非皮毛测试；processor.ts改动严格限于处理接口文件自身，pipeline.ts签名与U2-S1记录逐字相同证未被改动；Canvas/ItemTray/Workbench/gallery渲染与reducer均无source分支判断，用户件与内置件同一链路。详见receipts/U2-S2/review-evidence.md。",
+      "at_tick": 37
+    }
+  ]
+}

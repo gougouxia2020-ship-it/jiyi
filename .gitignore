@@ -1,5 +1,3 @@
-.opc/artifacts/
-
 # 每个里程碑的构建产物快照，与 dist 内容重复，代码在手可随时重建
 deliverables/
 

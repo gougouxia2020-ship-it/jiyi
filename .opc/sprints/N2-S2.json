@@ -1,0 +1,15 @@
+{
+  "milestone": "N2",
+  "goal": "目标白话：在 N2-S1 的自适应地基上叠浮层玻璃四件套——品牌章、模式开关+隐藏界面钮、场景条、物件 dock（可收合成贴边把手，把手造成的不对称须做视觉居中补偿）；落实拖动让路铁律；UI 标签/分区标题字号达到下限；写齐并跑通 e2e/n2-shell.spec.ts，收口整个 N2 里程碑验收。场景/物件的重命名与删除管理入口不在本 sprint 范围，属 N3。【验收硬指标】抄自 milestones.json N2 criteria（e2e与manual）/ phase1/success.json 条目6 / phase1/idea.json R1/R6 / taste.json v2 浮层玻璃与工艺底线段：e2e 用例 npx playwright test e2e/n2-shell.spec.ts --reporter=line 须通过、exit 0，覆盖1280/1920/2560与横屏手机视口均无横向溢出、外壳铺满；缩放窗口后物件相对场景位置不变；竖图场景图面完整可见；拖动中浮层不接指针且物件可落点在浮层常驻区（success.json 条目6：拖动物件（抽屉拖出或画布挪动）过程中所有浮层淡出且不接指针，物件能被摆放到浮层平时覆盖的位置如画面最顶部，任一浮层仍拦截指针、或无法把物件落点在浮层常驻区域内即判失败）；沉浸观感对齐 A2-旧信-沉浸.html 与 design.md v2：--glass-bg 半透明奶油底 + backdrop-filter: blur(--glass-blur) + --glass-line 描边 + --shadow-glass；隐藏界面钮（眼睛）一键收起全部浮层纯看房间，仅自身留一枚幽灵钮可恢复；dock 可收合成贴边把手，把手造成的不对称必须做视觉居中补偿，面板内容不得挤偏；UI 标签/分区标题字号不得低于 --text-label-min（11px，design.md 工艺底线：demo 里 9.5px 已被判太小）。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "N2-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "起 npm run build 与 npx playwright test e2e/n2-shell.spec.ts 各跑两次防flake；全量回归对照排除新增破坏；浏览器内实测 computed style 比对 tokens.css v2 逐字节；手动截图核查让路拖拽/隐藏界面钮/dock收合居中/字号六处；控制台错误监听",
+      "evidence": "e2e n2-shell.spec.ts 12/12 两次全绿 exit0；全量回归17 passed/9 failed与建造员自述一致且9条失败均为既有schema v2→v3遗留、不落在n2-shell；玻璃四件套computed style与tokens.css v2逐字节一致；拖动让路手动复核物件落在视口顶部品牌章覆盖区且松手浮层立即恢复；隐藏界面钮/dock收合居中/字号≥11px均手动复核通过；证据全文见 receipts/N2-S2/review-evidence.md",
+      "at_tick": 21
+    }
+  ]
+}

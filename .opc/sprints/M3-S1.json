@@ -1,0 +1,15 @@
+{
+  "milestone": "M3",
+  "goal": "编辑模式下选中物件可写/改故事，故事字段挂在 Item 本身（不挂 Placement），落 LocalStorage 全量持久化、刷新后完好还原；同一 Item 被摆入多个场景时故事跨场景同步更新。【验收硬指标】idea.json B1/B5 原文：Item{id,name,imageSrc,story}——story 字段挂 Item，多对多经 Placement，故事挂 Item 不挂 Placement；success.json 原文：“数据持久化：编辑（场景、物件摆放、故事）后刷新页面或重开，布局与故事完好还原”——摆好物件写好故事后刷新，任一 placement 丢失、位置/大小/角度变化、或故事文本丢失即判失败；success.json 原文：“故事挂在物件本身、跨场景同步：同一物件摆进两个场景，在其中一处改故事，另一处同步更新”——同一 Item 放入两个场景的 Placement，改其中一处的故事后另一处必须同步为最新值，不得出现新旧不一致；milestones.json M3 criteria 原文（本 sprint 覆盖前半段）：“选中物件写故事→刷新后还原→同一物件在另一场景故事同步更新”对应 e2e/m3-story.spec.ts 的前三步须可跑通。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "M3-S1",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "起 npm run dev 亲手走一遍建场景→摆物件→选中→写故事→保存→刷新→故事还原全链路；把同一物件摆入第二场景改故事验证跨场景同步；读 types.ts 核对 story 字段挂在 Item 而非 Placement；跑 npm run build 与 e2e/m3-story.spec.ts 看 exit code 并抽查用例断言强度；核对刷新后 placement 无位置/大小/角度漂移",
+      "evidence": "build 与全套 e2e（含 M1/M2 回归 5 条 + m3-story 2 条）全绿；types.ts 确认 story 挂 Item；浏览器实操与 localStorage 结构双重确认故事挂 Item 单点读写、跨场景双向同步、无 placement 漂移；完整命令输出与代码引用见 receipts/M3-S1/review-evidence.md",
+      "at_tick": 7
+    }
+  ]
+}

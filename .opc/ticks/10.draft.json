@@ -1,0 +1,12 @@
+{
+  "narrative": "里程碑 M4（收口·全流程 + 双端达标）本轮首次拆分排期：拆成 M4-S1（PC 视口下把 success.json 六条成功条件的主链路串成 e2e/m4-full.spec.ts）与 M4-S2（把该测试扩展到 768px/375px 双视口、核验无横向溢出与 console 错误、核对整体视觉还原「旧信」DNA），一次批量落档。拆完当轮并轨执行 M4-S1：建造员新增 e2e/m4-full.spec.ts，串起建场景→摆物件→写故事→游客模式看故事+原图→多场景背景不重复上限3阻止→刷新持久化还原→跨场景故事同步整条链路，未发现联调缺陷、src/ 零改动；评审员亲手复跑测试与全量回归、逐条对照四条硬指标核对测试源码与实现真实对应（非挂名），裁决 pass，M4-S1 定稿。M4 里程碑交付物尚未齐（S2 未做），暂不申报完成。",
+  "next_plan": "M4-S2（把 e2e/m4-full.spec.ts 扩展到 768px 与 375px 双视口、核验三视口均无横向溢出与 console 未捕获错误/未处理拒绝、修复响应式布局问题、核对整体视觉还原「旧信」DNA）尚未执行，下一轮预检预期给出 execute 动作，届时照 sprints/M4-S2.json 的 goal 派工建造员与评审员；M4 两个 sprint 都定稿后再申报里程碑完成。",
+  "decisions": [
+    "拆分里程碑 M4 为 M4-S1（PC 视口主链路 e2e）与 M4-S2（三视口+响应式+整体视觉 DNA），一次批量落档",
+    "M4-S1 建造员交付 e2e/m4-full.spec.ts、评审员亲验 pass，sprint 定稿"
+  ],
+  "outputs": [
+    "e2e/m4-full.spec.ts（新增，PC 视口覆盖 success.json 六条成功条件对应主链路）",
+    "receipts/M4-S1/receipt-builder.md、receipts/M4-S1/review-evidence.md"
+  ]
+}

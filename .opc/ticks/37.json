@@ -1,0 +1,25 @@
+{
+  "seq": 37,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-17T15:23:10.884Z",
+  "ended_at": "2026-07-17T15:55:02.454Z",
+  "duration_seconds": 1912,
+  "decisions": [],
+  "outputs": [
+    "src/components/Canvas.tsx",
+    "src/state/gallery.ts",
+    "src/App.tsx",
+    "src/components/ItemTray.tsx",
+    "src/upload/processor.ts",
+    "e2e/u2-upload.spec.ts",
+    "e2e/u2-large-image.spec.ts",
+    "e2e/u2-seam.spec.ts",
+    "receipts/U2-S2/receipt-builder.md",
+    "receipts/U2-S2/review-evidence.md",
+    "deliverables/U2"
+  ],
+  "artifacts": [],
+  "generation": 39
+}

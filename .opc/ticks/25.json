@@ -1,0 +1,15 @@
+{
+  "seq": 25,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-16T23:27:26.762Z",
+  "ended_at": "2026-07-16T23:46:36.074Z",
+  "duration_seconds": 1150,
+  "decisions": [
+    "N3 验收通过（检察员终裁 pass=true），里程碑状态 verifying → done"
+  ],
+  "outputs": [],
+  "artifacts": [],
+  "generation": 26
+}

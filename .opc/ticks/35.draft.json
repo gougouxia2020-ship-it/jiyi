@@ -1,0 +1,6 @@
+{
+  "narrative": "验收：里程碑「U1」三条硬指标逐条机器判定——生产构建、双源目录与v4持久化e2e（e2e/u1-foundation.spec.ts）、静默失败终结e2e（e2e/u1-storage-error.spec.ts）全部通过，结论「通过」，全程零模型开销。",
+  "next_plan": "里程碑「U1」已收官，下一轮按预检行动计划挑下一个里程碑（U2：上传管线与处理接口）。",
+  "decisions": [],
+  "outputs": []
+}

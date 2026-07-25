@@ -1,0 +1,22 @@
+{
+  "seq": 1,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-15T16:24:37.908Z",
+  "ended_at": "2026-07-15T16:38:37.560Z",
+  "duration_seconds": 840,
+  "decisions": [
+    "M1 拆分为 M1-S1（地基/数据模型/素材）与 M1-S2（外壳/场景管理/视觉/e2e）两个 sprint，按 idea.json 的 B1+B2 与 B4+外壳+视觉划界，各自可独立验收"
+  ],
+  "outputs": [
+    "src/model/types.ts",
+    "src/assets/manifest.ts",
+    "src/storage/persistence.ts",
+    "src/styles/tokens.css",
+    "receipts/M1-S1/receipt-builder.md",
+    "receipts/M1-S1/review-evidence.md"
+  ],
+  "artifacts": [],
+  "generation": 1
+}

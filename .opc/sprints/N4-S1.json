@@ -1,0 +1,15 @@
+{
+  "milestone": "N4",
+  "goal": "目标白话：新增 e2e/n4-full.spec.ts，在 PC（1920）视口下端到端跑通覆盖 success.json 全部9条成功条件的主链路：建场景→摆物件→写故事→切游客模式点开只读看故事+原图→场景改名/删除（背景配额释放可再建）→物件改名（跨场景同步）→陈列室名就地编辑→刷新持久化+跨场景故事同步全还原→3个场景上限背景不重复（第4个被阻止）；同时断言无 console 未捕获错误或未处理的 Promise 拒绝。命令 npx playwright test e2e/n4-full.spec.ts --reporter=line 须 exit 0。过程中发现的联调缺陷（不含横屏手机844×390适配与整体视觉打磨，那是 N4-S2 的活）就地修复；浮层让路/手柄顺滑/素材贴合的像素级细节已由 N2/N3/N1 各自 e2e 精测过，本 sprint 主链路串联带过即可、不重复精测。【验收硬指标】milestones.json N4.criteria 原文：全流程收口 e2e：覆盖9条成功条件主链路，在 PC（1920）与横屏手机（844×390）双视口跑通；无横向溢出；无 console 未捕获错误或未处理 Promise 拒绝。success.json 9条成功条件原文：①主流程闭环跑通：从零建一个场景→摆上至少一件物件→给它写故事→切到游客模式点开，能看到刚写的故事和物件原图，全程不报错、不卡死；⑥浮层让路：拖动物件（抽屉拖出或画布挪动）过程中所有浮层淡出且不接指针，物件能被摆放到浮层平时覆盖的位置；⑦持久化＋故事同步：摆放（场景图坐标系百分比）与故事刷新后完好还原；同一物件摆进两个场景，在一处改故事另一处同步更新；⑧管理与命名：场景可重命名与删除（删除释放该背景配额、可再建）；物件可重命名（挂 Item、跨场景同步）；陈列室名可就地编辑；以上改动刷新后保留；⑨场景约束＋双端可用：最多3个场景、背景不可重复、用满后新建被阻止照旧成立；PC与横屏手机都能完成「建场景→摆物件→写故事→切游客看故事」全流程、布局不错乱。本 sprint 先在 PC 视口把9条主链路骨架跑通、exit 0，横屏手机844×390与响应式/整体视觉验证留给 N4-S2。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "N4-S1",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲手连跑4次契约命令npx playwright test e2e/n4-full.spec.ts --reporter=line确认稳定exit0无flaky；逐段通读n4-full.spec.ts全文543行核对9条成功条件链路是否真被走到且断言扎实（含无console未捕获错误/未处理Promise拒绝的真实收集机制，非空断言）；因项目非git仓库改用src/与e2e/文件mtime交叉核验零src改动的自报；亲手跑全量回归npx playwright test与npm run build，复现25 passed/9 failed，逐条定位9个失败的报错原文与src/model/types.ts的schema版本注释、结合文件mtime时间线，确认失败根因是schema v2→v3迁移后旧测试未更新、且该迁移与旧测试文件均早于本sprint开工时间，非本sprint引入的新回归；确认spec全文仅用VP_PC=1920x1080一个视口、无越界碰N4-S2范围的横屏手机适配/整体视觉打磨。",
+      "evidence": "e2e/n4-full.spec.ts 4次连跑均1 passed exit 0；spec源码L211-542逐段覆盖①主流程闭环②浮层让路(dock+画布双场景)③持久化④跨场景故事同步⑤场景改名删除配额释放⑥物件改名跨场景同步⑦陈列室名编辑⑧刷新全还原⑨3场景上限第4被阻，L33-61为真实console/pageerror/unhandledrejection收集机制；src/目录最晚mtime 2026-07-17 06:44:00早于本sprint交付物e2e/n4-full.spec.ts的08:25:48超1.5小时；全量回归 25 passed/9 failed与receipt-builder.md自报一致，9个失败(m2×2/m3×1/m4×3/n1×3)报错均为schemaVersion expect 2 received 3或scale字段读取为0，src/model/types.ts L37注释确认v3已替换scale为w，且v3相关src文件mtime(06:38-06:39)与失败的4个旧测试文件mtime(07-16 23:00-23:04)均早于本sprint起点；npm run build exit 0；证据全文见 /Users/yuriiiz/Projects/Memories/receipts/N4-S1/review-evidence.md",
+      "at_tick": 26
+    }
+  ]
+}

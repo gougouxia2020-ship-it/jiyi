@@ -1,0 +1,15 @@
+{
+  "milestone": "N1",
+  "goal": "新增一张横版书房场景图（暖调胶片质感，与客厅/卧室成一组，分辨率同量级）替换现有竖版书房、接入 src/assets/manifest.ts 成为默认书房背景；持久化 schema 升级到 v2（SCHEMA_VERSION=2）——Placement 的 x/y 坐标改为场景图坐标系内的百分比存储与读写，Item.story 字段结构不变；旧 v1 数据加载时按当前 loadState 的版本不匹配分支处理（不崩溃、直接重置为初始空状态，即清空重摆）；新增 e2e/n1-foundation.spec.ts 覆盖百分比坐标读写与刷新还原、v1 旧数据启动不崩溃、故事字段结构保留三点；把 scripts/check-asset-trim.mjs 补上横版书房图存在性与横向朝向的校验；npm run build 生产构建须通过、无类型错误。范围提醒：contain 居中显示＋同图模糊补边＋窗口缩放钉住相对位置的自适应渲染层是 N2 milestone 的活，本 sprint 不做，只做数据存储格式与素材本体。【验收硬指标】milestones.json N1 criteria 原文四条：①「生产构建通过：Vite 生产构建成功、无类型错误」，命令 npm run build expect_exit 0（超时 180000ms）；②「素材裁切达标：...清单标注宽高比与实体一致（含新横版书房图存在且为横向）」，命令 node scripts/check-asset-trim.mjs expect_exit 0（超时 60000ms）；③「schema v2 e2e：百分比坐标读写与刷新还原；预置 v1 旧数据启动不崩、按作废处理；故事字段结构保留」，命令 npx playwright test e2e/n1-foundation.spec.ts --reporter=line expect_exit 0（超时 120000ms）；④「横版书房图对味：暖调胶片质感与客厅/卧室成一组，还原『旧信』气质」（manual 人工判）。idea.json 原文：「摆放坐标改存场景图坐标系内的百分比，旧像素坐标摆放作废、不做迁移（清空重摆），物件故事挂 Item、保留结构」；taste.json 方向 A2『旧信·沉浸』DNA：暖奶油纸底＋Georgia 系高对比衬线＋唯一强调色陶土红，横版书房图选材/调色须与此气质及客厅/卧室两张现有场景图成一组。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "N1-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲跑 npm run build / node scripts/check-asset-trim.mjs / npx playwright test e2e/n1-foundation.spec.ts（含全量14条e2e复跑）三条硬指标命令复现exit 0；通读check-asset-trim.mjs与n1-foundation.spec.ts全文核实非空断言、未误伤既有14张PNG裁边逻辑；通读persistence.ts/types.ts/Canvas.tsx/Workbench.tsx核实SCHEMA_VERSION=2与百分比坐标语义落到可执行换算代码而非只改注释；用Read工具亲眼看新横版书房图与客厅/卧室两张对照，并用PIL量化四图平均RGB与R-B暖度差；grep扫描N2越界实现（contain/模糊补边/缩放钉位）",
+      "evidence": "详见 receipts/N1-S2/review-evidence.md：build产物含reading-nook-wide-demo新图、旧竖版退出产物；check-asset-trim.mjs新增第154-176行独立JPEG朝向校验、14张PNG校验逐字段/逐数值与N1-S1基线一致；n1-foundation.spec.ts三测试逐点对应百分比读写刷新还原/v1不崩溃清空重摆/story结构保留，m2/m3/m4三处连带改动为v2契约直接推论；persistence.ts:21 SCHEMA_VERSION=2、loadState版本不匹配即返回全新初始空态；新图R-B暖度差46.6高于客厅10.7与卧室20.6两张既有基准、分辨率3000x2000与客厅同量级；App.css仍cover未改contain、Canvas.tsx注释与代码一致确认未替N2抢跑",
+      "at_tick": 14
+    }
+  ]
+}

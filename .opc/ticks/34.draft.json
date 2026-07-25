@@ -1,0 +1,13 @@
+{
+  "narrative": "建造员新建 e2e/u1-foundation.spec.ts，把里程碑 U1 验收标准 criteria[1] 四点（用户物件不被 reconcileItems 丢弃、内置 14 件对齐清单、预置 v3 旧数据启动不崩且不读出 v3 数据本身、图片二进制走 IndexedDB 且 LocalStorage 查不到二进制）逐条落成 Playwright 断言，未改动任何已过评审的实现代码（persistence.ts/imageStore.ts 等）。评审员亲手复核：独立跑通新增 4 个断言（4 passed exit0）、独立跑通 npm run build（exit0）、独立跑通全量套件并把新文件移出做基线对比，确认既有的 9 个失败（m2-transform/m3-story/m4-full/n1-foundation）与本次改动无关联，判定通过，评审证据落进 sprints/U1-S3.json 的 reviews[]。sprint U1-S3 收尾（planned→running→done）；里程碑 U1 三条验收标准（build、u1-foundation e2e、u1-storage-error e2e）交付物齐全，已申报 milestone-claim。",
+  "next_plan": "下一轮预检对里程碑 U1 跑验收（三条标准均可机器判定，可能由带外 fire 直接跑完不拉起本会话）；验收通过则 U1 收官，转入 U2（上传管线与处理接口）的拆分或执行；若仍不过，按复盘重拆流程处理。",
+  "decisions": [
+    "建造员新建 e2e/u1-foundation.spec.ts，落齐 U1 criteria[1] 四点断言，不动已过评审实现代码",
+    "评审员独立复核（跑测试、跑build、全量套件基线对比、逐行核对断言强度），判定通过，证据落 sprints/U1-S3.json",
+    "sprint U1-S3 planned→running→done；里程碑 U1 交付物齐全，申报 milestone-claim"
+  ],
+  "outputs": [
+    "e2e/u1-foundation.spec.ts —— 里程碑 U1 收口的 e2e 测试文件",
+    "receipts/U1-S3/receipt-builder.md、receipts/U1-S3/review-evidence.md —— 建造与评审过程记录"
+  ]
+}

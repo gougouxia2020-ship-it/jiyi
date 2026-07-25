@@ -1,0 +1,6 @@
+{
+  "narrative": "里程碑 N1 验收失败复盘：书房场景图 reading-nook-wide-demo.jpg 饱和度过高、缺胶片褪色感，与客厅/卧室不成一组，复盘记录已落 ticks/16.review.json；重拆新 sprint N1-S3（对该图重新调色分级，压低饱和度、补胶片颗粒褪色感，使三图成一组），落档 sprints/N1-S3.json，状态 planned。本轮不并轨执行，留给下一轮 execute。",
+  "next_plan": "下一轮预检会给出 execute 指示，按团队流程派工建造员执行 N1-S3：对 reading-nook-wide-demo.jpg 调色分级后交评审员核验饱和度与客厅/卧室是否成一组，过审后 advance sprint N1-S3 done，若 N1 交付物已全齐则申报 milestone-claim 再次提交独立检察员验收。",
+  "decisions": [],
+  "outputs": []
+}

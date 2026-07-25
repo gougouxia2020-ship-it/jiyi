@@ -1,0 +1,6 @@
+{
+  "narrative": "本轮预检指派动作是 acceptance，对里程碑 M1 跑 acceptance-run：构建与 e2e 两项机器判据延续第2轮既有结果，唯一的人工判条目「外壳视觉还原旧信 DNA」触发 needs_inspector。拉起独立检察员会话（agentId a0145b453f37646f8，opus），只对照验收标准原文与交付物本身（A-旧信.html、tokens.css 与 src/ 下的 App.tsx/App.css/Header/SceneBar/ItemTray/Canvas/Workbench），不采信团队自述，逐条核对暖奶油纸底、衬线品牌/场景名、陶土红唯一强调、Workbench 报头+场景条+[抽屉|画布]布局。裁决五项子指标全部符合，给出 pass:true、failed:[]。已按流程写入 verdict 并把 M1 状态流转 verifying→done。",
+  "next_plan": "M1 已全量验收通过，下一枚活跃里程碑（M2：核心变换交互）待下一轮预检指派拆分排期。",
+  "decisions": [],
+  "outputs": []
+}

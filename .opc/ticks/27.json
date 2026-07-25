@@ -1,0 +1,19 @@
+{
+  "seq": 27,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-17T01:20:22.437Z",
+  "ended_at": "2026-07-17T01:44:17.069Z",
+  "duration_seconds": 1435,
+  "decisions": [],
+  "outputs": [
+    "e2e/n4-full.spec.ts",
+    "src/components/StoryModal.tsx",
+    "src/App.css",
+    "receipts/N4-S2/receipt-builder.md",
+    "receipts/N4-S2/review-evidence.md"
+  ],
+  "artifacts": [],
+  "generation": 28
+}

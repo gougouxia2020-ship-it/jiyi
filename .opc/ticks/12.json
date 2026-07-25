@@ -1,0 +1,15 @@
+{
+  "seq": 12,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-15T23:01:53.552Z",
+  "ended_at": "2026-07-15T23:20:31.624Z",
+  "duration_seconds": 1119,
+  "decisions": [
+    "独立检察员对 M4 唯一人判条目（双端布局与整体视觉验收）定案 PASS，里程碑 M4 定稿为 done"
+  ],
+  "outputs": [],
+  "artifacts": [],
+  "generation": 12
+}

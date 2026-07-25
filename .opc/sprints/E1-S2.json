@@ -1,0 +1,30 @@
+{
+  "milestone": "E1",
+  "goal": "目标白话：堵上老板亲眼撞上的第二个真 bug——游客模式下还能一键切回编辑。让模式开关整组按钮在游客模式下彻底不渲染，只留一条不显眼的 URL 参数退出路径，访客无路可回编辑、也看不到任何上传/删除/重命名入口。命令 npm run build 须 exit 0（本 sprint 无新增自动化断言，验收记人工）。本 sprint 不含首拖卡死/hydrate/内存泄漏相关改动（已在 E1-S1 完成）。\n\n【验收硬指标】milestones.json E1.criteria 原文摘录：\n- 「游客模式关得住：切到游客模式后，界面上找不到也点不到任何切回编辑模式的入口（模式开关整组不渲染），上传/删除/重命名入口一并不见，点物件只弹故事与原图。同上，本条按老板定调记人工验收。」（本 sprint 内建造员/评审员仍须亲手在浏览器里切到游客模式核查一遍自检，不代表老板终验通过）\n- 「生产构建通过：Vite 生产构建成功、无类型错误。」——npm run build。\n\n实现要点（idea.json E1 原文摘录）：现状 Header.tsx:70-90 模式开关那组按钮完全没有 guest 判断，访客一点「编辑」即全面解锁；本 sprint 需让该组件组在 guest 模式下整组不渲染，仅保留 URL 参数这一不显眼的退出路径。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "E1-S2",
+      "who": "reviewer",
+      "verdict": "reject",
+      "tried": "通读Header.tsx/Workbench.tsx/ItemTray.tsx/Canvas.tsx/StoryModal.tsx/SceneBar.tsx/gallery.ts改动逐条比对6条验收硬指标；亲自跑npm run build复核exit 0；额外亲自跑npx playwright test全量既有e2e套件（59用例）做交叉验证",
+      "evidence": "9个既有e2e测试（m3-story/m4-full/n4-full/u3-guest/u4-full，覆盖M3/M4/N4/U3/U4五个里程碑官方验收）从应为通过变为失败，根因是这些测试在切到guest模式后断言刚点击的mode-guest按钮自身的aria-pressed属性，而本轮改动让该按钮整组在guest下不渲染、从DOM消失，测试断言前提被推翻；详见receipts/E1-S2/review-evidence.md",
+      "at_tick": 49
+    },
+    {
+      "sprint": "E1-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "第二轮复核（返工后）：逐个核对 e2e/u3-guest.spec.ts、e2e/m3-story.spec.ts、e2e/m4-full.spec.ts、e2e/n4-full.spec.ts、e2e/u4-full.spec.ts 里替换后的断言（把切到 guest 后断言刚点击按钮 aria-pressed 的旧写法，改成断言 mode-guest 与 mode-edit 两枚按钮均 toHaveCount(0)）；确认业务断言未被删减（U3 的无上传/删除/重命名入口、M3/M4/N4/U4 的点物件只弹故事+原图只读）逐行核对与打回前一致；核对 m4-full/n4-full 改走 ?edit 查询参数回编辑模式的改法未绕开正常路径、未损失覆盖意义；亲自重新跑 npx playwright test 全量套件与 npm run build（不采信建造员自报的 59/59），并用 grep 复核生产代码 Header.tsx 与 App.tsx 未被顺手改动。",
+      "evidence": "npx playwright test 实测 59 passed，第一轮点名的 9 个失败用例（u3-guest.spec.ts、m3-story.spec.ts 第三条、m4-full.spec.ts 三视口、n4-full.spec.ts 两视口、u4-full.spec.ts 两视口）本轮全部在通过列表内；npm run build 实测 tsc -b 与 vite build 均成功、exit 0；5 个测试文件逐行核对显示改动只替换了 mode-guest/mode-edit 相关的一两行断言并加解释性注释，其余业务断言段落逐行未变；m4-full.spec.ts 与 n4-full.spec.ts 里新增的 ?edit 查询参数导航仅用于承接切回编辑模式后继续跑的多场景管理链路，u3-guest/m3-story/u4-full 因 guest 段落是各自测试最后一步未加，核对合理；grep 复核 Header.tsx 第 76 行「mode 等于 edit 才渲染」与 App.tsx 第 28 行 URLSearchParams 后门逻辑均未被改动。详见 receipts/E1-S2/review-evidence.md 里新增的「第二轮复核」小节。",
+      "at_tick": 49
+    }
+  ],
+  "rework": [
+    {
+      "who": "reviewer",
+      "reason": "Header.tsx模式开关整组仅edit渲染这一改动本身逻辑正确、达成本sprint硬指标；但把M3/M4/N4/U3/U4五个里程碑的官方e2e验收测试（共9个用例）从通过改坏为失败——这些测试断言切到guest后刚点击的mode-guest按钮自身的aria-pressed属性，而按钮整组消失导致断言前提被推翻。建造员自检只跑了npm run build，漏跑了既有e2e套件，本可发现却未发现。需一并修复受影响的e2e断言（改为断言切到guest后mode-guest/mode-edit两枚按钮均不存在），并在返工自检中补跑npx playwright test全量确认回到全绿。",
+      "at_tick": 49
+    }
+  ]
+}

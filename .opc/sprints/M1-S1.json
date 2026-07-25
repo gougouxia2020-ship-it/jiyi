@@ -1,0 +1,15 @@
+{
+  "milestone": "M1",
+  "goal": "搭起 Vite+React+TS 工程骨架（可生产构建、可本地启动），落地 Scene/Item/Placement 数据模型与带 schema 版本号的 LocalStorage 全量持久化，并将内置素材（3 张背景、14 件物件）打包为静态资源清单供后续块调用。【验收硬指标】npm run build 生产构建成功、无类型错误，exit code 0；数据模型字段：Scene{id,name,backgroundId}、Item{id,name,imageSrc,story}、Placement{id,sceneId,itemId,x,y,scale,rotation,z}，多对多关系经 Placement，故事字段挂在 Item 上；LocalStorage 持久化带 schema 版本号、全量读写（非增量）；内置素材清单枚举 backgrounds/ 目录 3 张场景图（reading-nook/living-room/bedroom）与 items/ 目录 14 件透明抠图物件，含各自 id/名称/缩略/imageSrc 元数据。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "M1-S1",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲跑 npm run build 验证 exit 0；逐字段核对 src/model/types.ts 中 Scene/Item/Placement 是否精确对齐验收字面；核查持久化实现是否带 schema 版本号且全量读写；核查素材清单与 backgrounds/、items/ 目录实际文件名逐一比对",
+      "evidence": "build exit 0 无类型错误；三型字段与验收硬指标逐字对齐（story 挂在 Item、多对多经 Placement）；持久化模块含 SCHEMA_VERSION 常量、全量读写非增量；素材清单 17 项（3 背景+14 物件）与磁盘文件一一匹配，详见 receipts/M1-S1/review-evidence.md",
+      "at_tick": 1
+    }
+  ]
+}

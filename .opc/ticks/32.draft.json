@@ -1,0 +1,6 @@
+{
+  "narrative": "本轮对里程碑 U1 跑机器验收（acceptance-run），三条硬指标里两条过：npm run build 生产构建通过；e2e/u1-storage-error.spec.ts 静默失败终结用例通过。第二条「双源目录与 v4 持久化」不过——验收标准点名的 e2e/u1-foundation.spec.ts 在仓库里不存在，Playwright 报 Error: No tests found，退出码 1。e2e 目录下实际存在的是 e2e/u1-s1-dualsource.spec.ts（内容疑似覆盖同一场景但文件名对不上标准原文）。里程碑 U1 已被脚本判为 failed、needs_fix=true。",
+  "next_plan": "下一轮需要把「双源目录与 v4 持久化」这条验收标准对上真实交付：要么把 e2e/u1-s1-dualsource.spec.ts 改名/复制成 e2e/u1-foundation.spec.ts 并核实其断言覆盖验收标准原文四点（用户物件刷新不丢、内置14件对齐、v3旧数据不崩且作废重置、图片二进制只落IndexedDB不进LocalStorage），要么新写 e2e/u1-foundation.spec.ts 补齐缺口，之后重新申报 U1 完成、走下一轮验收。",
+  "decisions": [],
+  "outputs": []
+}

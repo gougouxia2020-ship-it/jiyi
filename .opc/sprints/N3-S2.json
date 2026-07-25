@@ -1,0 +1,15 @@
+{
+  "milestone": "N3",
+  "goal": "目标白话：加上管理与命名——场景可重命名与删除（删除释放该背景配额、可再建）、物件可重命名（挂 Item、跨场景同步）、陈列室名可就地编辑；三处编辑都是点进去改、回车/失焦即存，不开独立设置页；全部改动刷新后持久化。收口本里程碑：跑通 e2e/n3-edit.spec.ts 全量（dock拖入→挪位→角手柄缩放→旋转钮旋转→工具条移除；场景重命名/删除后配额释放可再建；物件重命名跨场景同步；陈列室名就地编辑；以上刷新后全还原），并在 PC 与横屏手机做手感验收。【验收硬指标】抄自 milestones.json N3 criteria / phase1/success.json 条目8 / taste.json 命名与管理段：陈列室名（品牌章）、场景名（chip）、物件名（dock 缩略卡）都支持就地编辑——点进去改、回车/失焦即存，不开独立设置页（taste.json 命名与管理的语气段原文）；场景删除走 chip 上的次级入口，删除即释放该背景配额，确认语气克制（一句话确认，不弹大警告框）；success.json 条目8：任一重命名/删除入口缺失、重命名后刷新丢失、删除场景后该背景仍不可用于新建、或物件改名后另一场景未同步，即判失败；e2e/n3-edit.spec.ts 需 expect_exit 0（timeout 180000ms）；手感验收（manual）：拖/缩/转在 PC 与横屏手机跟手、不掉帧、无跳变，手柄触摸可命中（≥ --h2-hit），无字符图标残留（milestones.json N3 criteria 原文）。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "N3-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲手跑 npm run build 与 npx playwright test e2e/n3-edit.spec.ts；逐条核对三处就地编辑手感、场景删除次级入口与一句话确认、删除释放背景配额可再建、物件改名跨场景同步、刷新后持久化；溯源全部历史红失败点是否与本轮改动文件无关；用 viewport 模拟 PC 与横屏手机核对手柄命中区（--h2-hit）与无字符图标残留",
+      "evidence": "npm run build exit 0，无类型错误；e2e/n3-edit.spec.ts 7/7 通过、exit 0；n2-shell.spec.ts 与 m1-shell.spec.ts 全绿无回归；历史红 m3-story①/n1-foundation①②③/m4-full×3/m2-transform×2 逐一溯源确认为 N1/N2 schema-v3 迁移遗留、与本轮改动文件无关；核查细节见 receipts/N3-S2/review-evidence.md",
+      "at_tick": 24
+    }
+  ]
+}

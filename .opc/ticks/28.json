@@ -1,0 +1,6 @@
+{
+  "status": "aborted",
+  "aborted_at": "2026-07-17T02:47:13.279Z",
+  "aborted_by_generation": 30,
+  "abort_reason": "持有者进程死亡或租约过期，接管时补记中止"
+}

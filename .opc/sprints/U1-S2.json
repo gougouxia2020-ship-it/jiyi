@@ -1,0 +1,15 @@
+{
+  "milestone": "U1",
+  "goal": "存储换血与终结静默失败：新增图片二进制存取模块（如 src/storage/imageStore.ts），把照片 Blob 存进 IndexedDB；GalleryState/LocalStorage 里的 Item 图片字段只存引用（id ＋ 元信息），不再把二进制或 base64 塞进 LocalStorage；src/storage/persistence.ts 的 SCHEMA_VERSION 从 3 升到 4，loadState 遇到旧版（v1-v3）数据一律不迁移、按已有的作废重置路径处理、应用不崩溃；终结 saveState 现有第 106 行的空 catch 静默失败——写入失败（配额超限/隐私模式等）必须能被上层捕获并冒泡，调用处需感知失败并在界面给出明确提示，不再无声吞掉数据。【验收硬指标】milestones.json U1 goal 原文：照片二进制（Blob）存 IndexedDB，状态树仍走 LocalStorage 但只存引用、不存图；存储 schema 升 v4，旧版数据照旧不迁移、作废重置、应用不崩；终结 saveState 的静默失败（现为空 catch）——写入失败必须能被上层捕获并冒泡，不再无声吞掉数据。criteria 原文（对应 u1-storage-error.spec.ts）：人为让存储写入失败（配额超限/隐私模式），错误能冒泡到上层并被界面感知，不出现「提示成功、刷新就没」的静默丢失。验收：人为让底层写入抛错时 saveState 的调用方能感知失败并触发 UI 提示；图片二进制写入 IndexedDB 后 LocalStorage 序列化内容里查不到该图片的二进制或 base64；npm run build 须 exit 0。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "U1-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "清空 dist 重跑 npm run build；亲跑并逐句核对 e2e/u1-storage-error.spec.ts 断言；用独立原生 indexedDB API 另行读取核实图片二进制不经被测代码自证；自写脚本独立构造 v1/v2/v3 三种旧数据实测 loadState 是否作废重置不崩；自写穿刺脚本验证 IndexedDB 写失败分支（建造员测试未覆盖的盲区）也能冒泡到界面提示；全量回归 29 passed/9 failed 与 U1-S1 基线逐条交叉核对；重复跑 9 次确认 m1-shell:34 回归点不再复现。",
+      "evidence": "build exit 0；LocalStorage 序列化内容查无该图片 base64/data:image 前缀、Item 只挂 imageRef、IndexedDB memories.images 库键 img-user-photo-1 取回非空 Blob；SCHEMA_VERSION=4，v1/v2/v3 旧数据均触发既有 loadState 不匹配分支重置为初始态、不崩；LocalStorage 配额超限与 IndexedDB 写失败两条路径均经 StorageError 冒泡到 App.tsx 的 .save-error 提示；全量回归失败集合与 U1-S1 基线完全一致、零新增失败。证据全文见 receipts/U1-S2/review-evidence.md。",
+      "at_tick": 31
+    }
+  ]
+}

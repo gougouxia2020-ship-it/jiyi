@@ -1,0 +1,15 @@
+{
+  "seq": 9,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-15T21:43:44.616Z",
+  "ended_at": "2026-07-15T21:50:46.828Z",
+  "duration_seconds": 423,
+  "decisions": [
+    "独立检察员对 M3 唯一人判条目（故事弹窗视觉）定案 PASS，里程碑 M3 定稿"
+  ],
+  "outputs": [],
+  "artifacts": [],
+  "generation": 9
+}

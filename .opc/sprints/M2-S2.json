@@ -1,0 +1,43 @@
+{
+  "milestone": "M2",
+  "goal": "补齐角手柄缩放、顶部手柄旋转、物件从抽屉拖入画布，写出覆盖全链路的 e2e 用例并在 PC 与横屏手机双端核验顺滑手感。【验收硬指标】milestones.json M2 criteria 原文：“变换交互 e2e：物件从抽屉拖入→拖动改位→角手柄缩放→顶部手柄旋转→移除→刷新后 placement(x,y,scale,rotation,z) 完整还原”——落成 e2e/m2-transform.spec.ts，命令 npx playwright test e2e/m2-transform.spec.ts --reporter=line 须 exit 0；criteria 原文：“顺滑手感：拖/缩/转跟手、无肉眼可见掉帧或位置/角度跳变、手柄命中准；在 PC 与横屏手机各验一遍”——本 sprint 在 PC 与横屏手机双端各手动验一遍；抽屉拖入呼应 idea.json 功能范围「物件拖放/缩放/旋转/移除」表述，须实现真实拖拽而非仅点选；scale/rotation 同样只经 transform、合成层+rAF 提交。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "M2-S2",
+      "who": "reviewer",
+      "verdict": "reject",
+      "tried": "跑 npm run build 与 playwright e2e 命令看 exit code；读 Canvas.tsx/gallery.ts/ItemTray.tsx/Workbench.tsx/App.css 确认 scale/rotation 只写 transform；起 npm run dev 用独立 Playwright 脚本以真实 page.mouse 事件与 CDP Input.dispatchTouchEvent 真触摸，在 PC(1280x800) 与横屏手机(844x390, hasTouch/isMobile) 各手动走一遍拖入→选中→移动→缩放→旋转→移除→刷新全链路，未采信 builder 自报脚本",
+      "evidence": "PC 端全链路通过：拖入落点精确、四角手柄+旋转手柄命中测试全真、字段隔离正确、inline style 全程只含 transform、无 console 错误、刷新持久化正确。横屏手机(844x390)不达标：从初始视图对抽屉第一件物件做真实拖拽手势，松手后未建出 placement，可复现。根因见 src/App.css：第233-235行 .thumb{width:100%} 在第533-569行窄屏媒体查询里未把 width 重置回 auto，flex:none 令 flex-basis 取走该 width:100%，缩略卡被撑到实测798px（非预期~96-110px）；第207行 .grid{min-height:520px} 窄屏下未下调，纵向堆叠总高约703px，画布大半落在390px折叠线以下。两者叠加使抽屉与画布初始视图不能同屏可见（截图 phone-0-shell.png：抽屉占满屏、画布只露一条缝；tray-item[0].y=-114px）。补充测试确认物件已在画布上后移动/缩放/旋转/移除的触摸手势本身在横屏手机上是好的，缺陷精确定位在拖入这一步的窄屏布局。完整命令输出/代码原文/截图见 receipts/M2-S2/review-evidence.md",
+      "at_tick": 5
+    },
+    {
+      "sprint": "M2-S2",
+      "who": "reviewer",
+      "verdict": "reject",
+      "tried": "重跑 npm run build 与全套 e2e 看 exit code；通读 App.css 全文确认第2轮改动确实限定在窄屏媒体查询内、PC基础规则字节级未变；起 npm run dev 用真实 CDP 触摸序列（非builder自报脚本，三套独立脚本：定点路径/线性插值/角度扫描）在844x390视口重新走拖入→拖动→缩放→旋转→移除→刷新链路，并做0°-90°角度扫描定位方向敏感边界；PC(1280x800)端用真实鼠标事件抽查全链路有无回归",
+      "evidence": "第1轮打回的缺陷（抽屉与画布不能同屏可见）确认已修复：布局实测与builder声称基本一致（tray可见96px、canvas可见149.25px，scroll=0）。PC端全链路干净：拖入/移动/缩放/旋转/移除字段隔离正确，无console/page错误，无回归。新发现横屏手机方向敏感缺陷：App.css:575 .thumb{touch-action:pan-x}（窄屏媒体查询内）令浏览器把首次滑动偏横向（>45°~50°，从垂直方向量）的触摸序列判给原生横向滚动，先于ItemTray.tsx里JS拖拽状态机的6px阈值判定触发pointercancel，导致该方向拖入静默失败、不建placement、无错误提示。角度扫描（0-90度，10个采样点）复现出清晰的45度成功/50度失败确定性分界，3套独立脚本（定点路径/线性插值/角度扫描）加pointer-event日志捕获pointercancel交叉验证。可见画布约822px宽仅149px高，多数从抽屉拖向画布右侧/远处的真实落点角度会落在这个不安全锥角外，属常见用法非边缘情形。已排除一处误报（链式测试中缩放偶发一次失败，6/6独立重复确认缩放/旋转机制本身正常，系视口边缘伪影，builder已自行披露，非新bug，未计入裁决）。完整命令输出/App.css原文/角度扫描表/pointer事件日志/截图见 receipts/M2-S2/review-evidence.md 第2轮复核章节",
+      "at_tick": 5
+    },
+    {
+      "sprint": "M2-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "起 npm run dev 自写 Playwright/CDP 脚本在844x390触摸视口做12角度(-90°~90°)扫描+5个极端横向拖向画布远角(最大82.5°)复核拖入；抓 pointer 事件日志确认 pointercancel 计数；getComputedStyle 核实 .thumb touch-action 已由 pan-x 改为 none；验证翻页箭头 scrollLeft 0→658→686→0 且不遮挡首末卡片拖拽；PC(1280x800)端抽查四角手柄命中与字段隔离；重跑完整 move/scale/rotate/remove/reload 链路；重跑 npx playwright test e2e/m2-transform.spec.ts 与 npm run build 看 exit code；通读 App.css/ItemTray.tsx/Canvas.tsx/Workbench.tsx 核对改动范围与文件 mtime，确认本轮 diff 只限于 App.css+ItemTray.tsx，PC 基础规则与变换手势状态机未被触碰",
+      "evidence": "横屏手机方向死角（第2轮打回主因）确认修复：12角度扫描全成功，pointercancel 归零，touch-action 已改 none。翻页箭头承载横向浏览功能可用、不挡关键交互，对照验收标准原文（未强制要求原生横滑手势，只要求横向浏览能力本身可用）判定符合验收意图。PC端与既有e2e无回归，5 passed，build exit 0。完整链路(move/scale/rotate/remove/reload)复核干净，一处初始异常追溯为已有的、与本轮diff无关的短视口手柄裁切限制（沿用前两轮同样方法论后链路正常）。四条硬指标（e2e exit0、顺滑手感PC+横屏手机、真实拖拽、transform+rAF合成层）逐条亲手复核全过。完整命令输出/角度扫描表/pointer事件日志/代码原文比对见 receipts/M2-S2/review-evidence.md 第3轮复核章节",
+      "at_tick": 5
+    }
+  ],
+  "rework": [
+    {
+      "who": "reviewer",
+      "reason": "横屏手机(844x390)初始视图下抽屉与画布无法同屏可见——App.css 第233-235行 .thumb{width:100%} 在第533-569行窄屏媒体查询里未重置回 auto，缩略卡被撑到近全宽约798px；.grid（第207行）min-height:520px 窄屏下未下调，画布被推出390px折叠线之外；两者叠加使抽屉拖入这一核心动作在不预先滚动的前提下无法一次性完成，不达 milestones.json M2 criteria「顺滑手感…在 PC 与横屏手机各验一遍」。改到什么程度算过：844x390量级横屏视口下缩略卡恢复紧凑尺寸、抽屉与画布同屏可见可达，真实指针/触摸重新走一遍拖入→拖动→缩放→旋转→移除→刷新全链路留证据（不能只测无横向溢出）。",
+      "at_tick": 5
+    },
+    {
+      "who": "reviewer",
+      "reason": "横屏手机(844x390)抽屉拖入对滑动方向敏感——App.css:575 .thumb{touch-action:pan-x}（窄屏媒体查询内）让浏览器把首次滑动偏横向(超出约45°~50°安全锥角)的触摸判给原生横向滚动，先于 ItemTray.tsx 的 JS 拖拽状态机(6px阈值)触发 pointercancel，导致该方向拖入静默失败、不建 placement、无错误提示，角度扫描(0-90度)复现出45度成功/50度失败的确定性分界。不达 milestones.json M2 criteria「顺滑手感…跟手…在 PC 与横屏手机各验一遍」及任务书「抽屉拖入须真实拖拽」。改到什么程度算过：横屏手机下任意方向拖入画布都能可靠建出 placement（建议改用 touch-action:none 交给 JS 阈值判断点选/拖拽、抽屉横向浏览另找承载区），验收需附角度扫描或等效证据证明无方向死角。",
+      "at_tick": 5
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "seq": 45,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-17T20:52:58.916Z",
+  "ended_at": "2026-07-17T21:47:38.743Z",
+  "duration_seconds": 3280,
+  "decisions": [],
+  "outputs": [
+    "e2e/u4-full.spec.ts"
+  ],
+  "artifacts": [],
+  "generation": 47
+}

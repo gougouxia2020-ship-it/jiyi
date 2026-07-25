@@ -1,0 +1,15 @@
+{
+  "milestone": "N4",
+  "goal": "目标白话：把 e2e/n4-full.spec.ts 扩展到横屏手机844×390视口跑通同一条9条成功条件主链路，PC（1920）与844×390双视口均验证无横向溢出、无 console 未捕获错误或未处理的 Promise 拒绝；修复发现的响应式布局问题；核验故事弹窗窄屏贴底近满宽；核验整体视觉还原「旧信·沉浸」DNA（design.md v2/tokens.css v2：玻璃浮层、陶土红手柄、暗角与模糊补边）；核验工艺底线（UI标签/标题字号不低于token下限、选框贴合可见实物、dock等不对称控件视觉居中补偿）。命令 npx playwright test e2e/n4-full.spec.ts --reporter=line 须 exit 0（覆盖双视口，非仅PC）。【验收硬指标】milestones.json N4.criteria 原文：全流程收口 e2e：覆盖9条成功条件主链路，在 PC（1920）与横屏手机（844×390）双视口跑通；无横向溢出；无 console 未捕获错误或未处理 Promise 拒绝。manual验收原文：终验：双端视觉不错乱；整体气质对尺 design.md v2与tokens.css v2（含工艺底线：字号下限、选框贴实物）。taste.json原文：工艺底线（老板挑出的打磨点，入规范执行）：UI标签/分区标题字号不得低于token下限（demo里9.5px被判太小）；dock等带收合把手的不对称控件要做视觉居中补偿，内容不得挤偏；素材裁切按alpha阈值忽略烘焙软阴影，选框必须贴可见实体。idea.json R5原文：游客模式＝浮层收到最简＋点物件弹故事（只读）；故事弹窗沿用半透明奶油款、适配满屏布局；PC与横屏手机全流程可用。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "N4-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲手连跑4次 npx playwright test e2e/n4-full.spec.ts --reporter=line（PC1920+手机844×390双视口）；逐段核对spec源码确认横向溢出/console错误/未处理Promise拒绝的断言真实生效；全仓grep核查StoryModal关闭钮SVG化无字符✕残留；对照design.md v2/tokens.css v2工艺底线逐条截图眼检玻璃浮层/陶土红手柄/暗角模糊补边/选框贴实物/dock居中补偿；亲手跑npm run build与n2/n3回归套件核实无破坏",
+      "evidence": "npx playwright test 连跑4次均2 passed exit0；npm run build exit0；n2/n3回归19 passed exit0；详细逐条核查证据见 receipts/N4-S2/review-evidence.md",
+      "at_tick": 27
+    }
+  ]
+}

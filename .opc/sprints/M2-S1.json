@@ -1,0 +1,30 @@
+{
+  "milestone": "M2",
+  "goal": "补齐画布内核心变换机制底座：物件可被选中、按住拖动改变位置，提供移除入口并可移除；变换渲染只经 CSS transform 落位，走合成层+requestAnimationFrame 提交、不触发布局重排；PC 鼠标与横屏手机触摸统一走 Pointer Events 处理。【验收硬指标】milestones.json M2 原文：“物件可从抽屉拖入画布，可拖动改位、角手柄缩放、顶部手柄旋转、移除；变换经 CSS transform；PC 与横屏手机统一用手柄；placement(x,y,scale,rotation,z) 持久化，刷新完整还原”——本 sprint 落地其中「拖动改位」「移除」「变换经 CSS transform」与「PC/触摸统一手柄」的交互底座；idea.json B3 原文：“Pointer Events 统一鼠标/触摸；拖动=按住拖……CSS transform（translate/scale/rotate）走合成层 + rAF 提交避免重排；选中态与手柄命中区”；criteria#3 原文：“变换仅走 transform/opacity、不触发布局重排（合成层 + requestAnimationFrame 提交）”；拖动结束后 placement.x/y 落回状态经 LocalStorage 持久化，刷新后位置还原；本 sprint 不新写 e2e 文件，用 npm run build（exit 0）+ 手动核验拖动/移除/刷新还原。",
+  "status": "done",
+  "rework": [
+    {
+      "who": "reviewer",
+      "reason": "删除入口在默认多物件相邻摆放路径下被后放物件遮挡（各 .stage__item 独立层叠上下文，先放物件的删除按钮被邻居 img 挡住，elementFromPoint 命中邻居而非按钮，真实点击超时失败）；需让选中/操作中的物件临时置顶 z-index 后按同场景复测",
+      "at_tick": 4
+    }
+  ],
+  "reviews": [
+    {
+      "sprint": "M2-S1",
+      "who": "reviewer",
+      "verdict": "reject",
+      "tried": "亲跑 npm run build 与 e2e/m1-shell.spec.ts 确认未回归；起 dev server 用临时 Playwright 脚本走选中/拖动/删除/刷新全链路，PC 鼠标与 CDP 模拟横屏触摸各验一遍；对删除入口额外用两件默认相邻摆放物件做真实（非 force）点击 + elementFromPoint 精确打靶复测",
+      "evidence": "删除按钮在默认摆放间距下（相邻物件间距96px<按钮命中区域110px）被后放物件的 img 遮挡，elementFromPoint 命中邻居图片而非删除按钮本身，真实点击 30s 超时失败；根因是 .stage__item 各自建立独立层叠上下文，先放物件的删除按钮无法穿透后放物件；详细操作与截图证据见 receipts/M2-S1/review-evidence.md",
+      "at_tick": 4
+    },
+    {
+      "sprint": "M2-S1",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲手复现上一轮打回的确切路径（两件默认相邻摆放物件，选中先放者，真实非force点击删除按钮）；独立写8条临时Playwright用例覆盖goal全部检查点；专项验证选中态z临时置顶是否被意外持久化（拖动后不同时序对比style逐字节、对照M1场景确认逐字节比对逻辑不受影响）；亲跑build与e2e/m1-shell.spec.ts",
+      "evidence": "删除按钮elementFromPoint命中自身且5s内真实点击成功、物件数2→1、刷新后仍为1；单物件场景删除未回归；z仅在selected渲染帧临时变为maxZ+1，取消选中/刷新后逐字节回落到持久化p.z（GalleryState/saveState全程未碰z字段，selectedId是Canvas本地useState从不进持久化）；选中态陶土红outline=rgb(168,87,47)=--color-accent；PC拖动与CDP模拟横屏触摸均只经transform改位、scale/rotation不变、刷新后translate(x,y)逐字节还原；npm run build exit 0；npx playwright test e2e/m1-shell.spec.ts 3 passed exit 0；详细证据见 receipts/M2-S1/review-evidence.md",
+      "at_tick": 4
+    }
+  ]
+}

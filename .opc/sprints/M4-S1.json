@@ -1,0 +1,15 @@
+{
+  "milestone": "M4",
+  "goal": "新增 e2e/m4-full.spec.ts，在 PC 视口下端到端跑通 success.json 六条成功条件对应的完整主链路（建场景→摆上至少一件物件→写故事→切游客模式点开看故事+原图→多场景与背景不重复上限3→刷新持久化还原→同一物件跨场景故事同步），命令 npx playwright test e2e/m4-full.spec.ts --reporter=line 须 exit 0；过程中发现的联调缺陷（不含响应式/整体视觉，那是 S2 的活）就地修复。【验收硬指标】success.json 成功条件原文摘录：①「主流程闭环跑通：从零建一个场景→摆上至少一件物件→给它写故事→切到游客模式点开，能看到刚写的故事和物件原图，全程不报错、不卡死」；②「多场景+背景不可重复约束成立：能创建到3个场景、每个用不同背景；用满3张背景后新建场景被正确阻止（置灰并提示素材已用完）」；③「数据持久化：编辑（场景、物件摆放、故事）后刷新页面或重开，布局与故事完好还原」；④「故事挂在物件本身、跨场景同步：同一物件摆进两个场景，在其中一处改故事，另一处同步更新」。milestones.json M4 criteria 原文：「全流程+双端 e2e：覆盖6条成功条件主链路，在 PC / 768px / 375px 三视口跑通；无横向溢出；无 console 未捕获错误或未处理的 Promise 拒绝」——本 sprint 先在 PC 视口把六条成功条件的主链路骨架跑通、exit 0，768px/375px 双视口与响应式验证留给 S2。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "M4-S1",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲手跑 npx playwright test e2e/m4-full.spec.ts --reporter=line 与全量回归、连跑3次核验无flaky、逐条对照 sprint goal 四条硬指标（主流程闭环/背景不重复上限3/持久化/跨场景故事同步）核查 e2e/m4-full.spec.ts 源码是否真的覆盖每条链路环节、核实 console 未捕获错误/未处理 Promise 拒绝断言是否落实",
+      "evidence": "npx playwright test e2e/m4-full.spec.ts --reporter=line exit 0；全量套件 9/9 通过、连跑3次无flaky；测试源码逐段核对四条硬指标与 src/ 实现真实对应，非挂名占位；详见 receipts/M4-S1/review-evidence.md",
+      "at_tick": 10
+    }
+  ]
+}

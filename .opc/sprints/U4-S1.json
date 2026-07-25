@@ -1,0 +1,15 @@
+{
+  "milestone": "U4",
+  "goal": "目标白话：新增 e2e/u4-full.spec.ts，在 PC（1920）视口下端到端跑通「传照片→建场景→摆物件→写故事→切游客看故事」全链路——含上传（选图→预览→确认入库→dock「已传 N/50」计数更新）、拖入场景摆放/缩放/写故事、切游客模式只读看故事+原图；同时把全量 playwright 套件（M1~M4、N1~N4、U1~U3 全部既有 e2e）跑绿——不回归是硬指标；过程中发现的联调缺陷（不含横屏手机适配与整体视觉打磨，那是 U4-S2 的活）本 sprint 就地修复。命令 npx playwright test e2e/u4-full.spec.ts --reporter=line 与 npx playwright test --reporter=line 均须 exit 0。【验收硬指标】milestones.json U4.criteria 原文摘录：「全流程双端 e2e：传照片→建场景→摆物件→写故事→切游客看故事，在 PC 与横屏手机视口下均跑通、布局不错乱；过程中无 console 未捕获错误、无横向滚动条」；「旧里程碑不回归：M1~M4、N1~N4 的既有 e2e 全套跑通（全量 playwright 套件绿）」。本 sprint 先在 PC 视口把主链路跑通、全量回归绿，横屏手机 844×390 与视觉 DNA 终验留给 U4-S2。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "U4-S1",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲手连跑 npx playwright test e2e/u4-full.spec.ts --reporter=line 与 npx playwright test --reporter=line 各 2 次（非采信自报）；逐行通读 u4-full.spec.ts 全 451 行核对上传→建场景→拖入摆放/挪位/缩放→写故事→刷新还原→切游客只读全链路是否走真实 UI 交互且错误收集/无横向溢出断言是否真实机制；用 mtime 交叉核验 src/ 目录在本 sprint 改动窗口内确无改动；重点穿刺核实建造员「铁证」（m4-full 曾断言 schemaVersion===2、n4-full 断言===4 不可调和）——独立读 persistence.ts 的 SCHEMA_VERSION=4 与当前 n4-full.spec.ts:373 的断言，并回溯 N1-S2 至 U3-S2 共 10+ 轮历史 receipts 交叉验证该断言冲突是可独立复现的历史事实而非编造；逐处核对 4 个校准文件（n1-foundation/m3-story/m2-transform/m4-full）改动是否偷懒放水弱化断言掩盖真实 bug——对照 model/types.ts 的 Item/Placement 实际字段与 Workbench.tsx 的真实边界判定源码逐条验证。",
+      "evidence": "两条验收命令各跑 2 次均 exit 0（u4-full 稳定 1 passed/3.1s，全量稳定 56 passed/~50s），无 flaky；e2e/u4-full.spec.ts 全链路真实 UI 交互（click/mouse拖拽/fill），文件注入手法与已验收的 e2e/u2-upload.spec.ts:48-68、e2e/u3-quota.spec.ts:88-105 逐字节一致且目标是生产代码里的真实 data-testid=upload-input（src/upload/UploadEntry.tsx:129-130）；错误收集用真实 pageerror/unhandledrejection/console 监听（u4-full.spec.ts:38-66），无横向溢出用真实 scrollWidth/clientWidth 测量、5 处调用（L291/297/346/409/446）；src/ 目录 21 个文件最新 mtime 2026-07-18 01:45:06，早于本 sprint e2e 改动窗口 05:07-05:32 三小时以上，无源码改动属实；铁证核实：src/storage/persistence.ts:31 SCHEMA_VERSION=4，e2e/n4-full.spec.ts:373（本 sprint未改动）断言 schemaVersion===4，而 receipts/N1-S2、N2-S1、N2-S2、N4-S1、N4-S2、U1-S1、U1-S2、U2-S1、U3-S1、U3-S2 的 review-evidence/receipt-builder 逐轮独立记录 m4-full/m3-story/n1-foundation 截至 U4-S1 开工前仍硬编码 schemaVersion===2（U1-S2 receipt-builder.md:29 明确记录当时只把 n4-full 同步到新版本号、刻意不碰 m4-full 系列），两条互斥断言同时存在是可独立复现的历史事实，非本轮编造；4 处校准逐一核对源码证实必要且未弱化：Item 类型（model/types.ts:29-49）确有 source/aspectRatio/originalImageSrc/displayImageSrc 等新增字段使旧的精确4字段断言必然失效，改用 arrayContaining 后仍保留 story 精确 toBe 断言；Placement 类型（model/types.ts:69-83）确无 scale 字段、只有 w，scale→w 改造是必要修正；Workbench.tsx:32-45 handleDropItemAt 的真实边界判定确认 m2-transform 「拖到视口上缘」新断言命中的是真实拒收逻辑非空转必过。判定 PASS，未发现需打回问题。详见 receipts/U4-S1/review-evidence.md。",
+      "at_tick": 45
+    }
+  ]
+}

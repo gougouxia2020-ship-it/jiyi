@@ -1,0 +1,15 @@
+{
+  "milestone": "N1",
+  "goal": "一次性写脚本按 alpha 阈值（忽略烘焙半透明软阴影）识别真实不透明像素包围盒，把 items/ 目录下 14 张物件 PNG 的透明留白裁到四边 ≤8px 呼吸边、原地替换文件；同时写校验脚本 scripts/check-asset-trim.mjs 逐张测量裁剪结果是否达标；素材清单 src/assets/manifest.ts 的物件条目补充宽高比字段，值与裁剪后图片的真实实体宽高比一致。本 sprint 只处理已有 14 张物件图，新增的横版书房场景图由 S2 负责，check-asset-trim.mjs 里横版书房图的存在性/朝向校验也留给 S2 补充，S1 的脚本只需覆盖 14 张物件图这部分并 exit 0。【验收硬指标】milestones.json N1 criteria 原文：「素材裁切达标：校验脚本逐张测 14 张物件 PNG，四边透明边 ≤8px、清单标注宽高比与实体一致（含新横版书房图存在且为横向）」，命令 node scripts/check-asset-trim.mjs 须 exit 0（超时 60000ms，S1 阶段只需 14 张物件图部分通过）。idea.json 原文点出的问题：「14 张物件 PNG 带大片透明边（最严重的实体只占画布 43%×45%），且部分图烘焙了半透明软阴影把实体比例撑歪（复古闹钟实为竖向），选中框比实物大一圈、标注宽度虚高」——裁剪与宽高比标注必须解决这两个问题，阴影不算实体。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "N1-S1",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲跑 node scripts/check-asset-trim.mjs 与 npm run build 均 exit 0；另写独立 PIL 脚本对 14 张物件 PNG 重算 alpha≥240 不透明像素包围盒、四边留白与宽高比，逐条与 manifest.ts 标注比对；目视抽查 8 张裁边是否贴合实体、核实复古闹钟已裁为竖向；核对 check-asset-trim.mjs 未越界检查属于 S2 的横版书房图、backgrounds/ 未被触碰",
+      "evidence": "证据全文见 receipts/N1-S1/review-evidence.md：check-asset-trim.mjs 与 npm run build 两条命令输出均 exit 0；独立重算的 14 张图透明边/宽高比数值与 manifest.ts 逐条吻合；目视抽查未见裁边越界或贴阴影",
+      "at_tick": 13
+    }
+  ]
+}

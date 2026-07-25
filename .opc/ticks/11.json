@@ -1,0 +1,21 @@
+{
+  "seq": 11,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-15T22:16:41.879Z",
+  "ended_at": "2026-07-15T22:58:47.826Z",
+  "duration_seconds": 2526,
+  "decisions": [
+    "首次派工遗漏 model 参数、误用低档位模型的问题已就地纠正：改走 opus 档位重新核验收尾，并如实按实际拉起档位记账（builder=opus, reviewer=sonnet）"
+  ],
+  "outputs": [
+    "e2e/m4-full.spec.ts（扩展为三视口参数化）",
+    "src/index.css（#root 满宽修复）",
+    "src/App.css（窄屏手柄命中区放大）",
+    "receipts/M4-S2/receipt-builder.md",
+    "receipts/M4-S2/review-evidence.md"
+  ],
+  "artifacts": [],
+  "generation": 11
+}

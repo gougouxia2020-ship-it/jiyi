@@ -1,0 +1,22 @@
+{
+  "seq": 30,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-17T10:26:57.673Z",
+  "ended_at": "2026-07-17T10:46:57.549Z",
+  "duration_seconds": 1200,
+  "decisions": [
+    "里程碑 U1 拆分为 U1-S1（Item 双源数据结构 + reconcileItems 修复）与 U1-S2（存储换血：IndexedDB + schema v4 + 终结 saveState 静默失败），按 idea.json 的技术分界各自可独立验收",
+    "U1-S1 建造员交付、评审员亲验 pass，sprint 定稿为 done"
+  ],
+  "outputs": [
+    "src/model/types.ts",
+    "src/storage/persistence.ts",
+    "e2e/u1-s1-dualsource.spec.ts",
+    "receipts/U1-S1/receipt-builder.md",
+    "receipts/U1-S1/review-evidence.md"
+  ],
+  "artifacts": [],
+  "generation": 32
+}

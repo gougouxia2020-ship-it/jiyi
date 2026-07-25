@@ -1,0 +1,15 @@
+{
+  "milestone": "E1",
+  "goal": "目标白话：修好老板亲眼撞上的「首次拖拽卡死」——把拖拽幽灵从 dock 里放出来避免被裁剪吞掉、给任何异常松手路径都补上复位兜底、让背景图没加载完时的落点换算也不跑偏；顺带堵上 hydrate 期间看不见的物件还能被拖出来摆放的漏洞，以及物件被删/换图后 objectURL 从不 revoke 的内存泄漏。命令 npx playwright test e2e/e1-hydrate.spec.ts --reporter=line 与 npm run build 均须 exit 0。本 sprint 不含游客模式堵漏（留给 E1-S2）。\n\n【验收硬指标】milestones.json E1.criteria 原文摘录：\n- 「首次拖拽即可用：清缓存后打开页面，趁背景图还没加载完立刻从 dock 拖一件物件进场景——拖动中幽灵全程可见并跟着指针走，松手后物件就落在松手处（不跑偏、不消失、不落进模糊补边区），界面不卡死；随后再拖两次，表现与第一次一致；拖到浏览器窗口外松手回来后界面仍可正常操作、无需刷新。」（原口径老板定人工验收：修完他自己试；本 sprint 内建造员/评审员仍须亲手把这条走一遍自检，不代表老板终验通过）\n- 「拖拽与回填的自动兜底：hydrate 尚未把图回填到用户物件时，该物件的 dock 卡片不可拖、不可摆（不会摆出一个看不见的物件）；物件被删除或图被替换后，其 objectURL 被 revoke（不再泄漏）。」——对应 npx playwright test e2e/e1-hydrate.spec.ts。\n- 「生产构建通过：Vite 生产构建成功、无类型错误。」——npm run build。\n\n实现要点（idea.json E1 原文摘录）：拖拽幽灵改走 createPortal 逃出到 body（照 UploadEntry.tsx:9-10 已验证做法，同一个「dock 带 transform+overflow:hidden 会为其内的 fixed 浮层建立包含块并裁掉」的坑）；补 window 级 pointerup/pointercancel 兜底，窗口外松手、切标签页、setPointerCapture 失败等任何异常路径都能把 .is-dragging 复位；落点换算不再依赖背景图恰好 onLoad——未加载完时用图片固有宽高比而非退化成 stage 比例；App.tsx:47 创建的 objectURL 需要在物件删除/替换时 revoke。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "E1-S1",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲手连跑 npx playwright test e2e/e1-hydrate.spec.ts --reporter=line 与 npm run build 各2次，非采信建造员自报；通读改动文件核实createPortal逃逸、window级pointerup/pointercancel兜底、落点换算不依赖onLoad、hydrate未回填不可拖、objectURL revoke是否真实生效；起本地dev server用真实Chrome操作对两条人工验收标准（首次拖拽即可用、拖出窗口外自愈）逐项实测；额外跑全量playwright套件核查零回归。",
+      "evidence": "e1-hydrate.spec.ts与build各2次均exit0；全量59测试通过零回归；幽灵portal逃逸确认渲染进body而非dock内部；5次拖放落点误差<3px；window级pointerup/blur/pointercancel三条异常路径均正确复位.is-dragging且复位后可继续正常拖拽；详细核查证据与命令输出见 receipts/E1-S1/review-evidence.md。",
+      "at_tick": 48
+    }
+  ]
+}

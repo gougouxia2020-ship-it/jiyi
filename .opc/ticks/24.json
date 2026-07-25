@@ -1,0 +1,26 @@
+{
+  "seq": 24,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-16T22:31:24.477Z",
+  "ended_at": "2026-07-16T23:05:13.416Z",
+  "duration_seconds": 2029,
+  "decisions": [],
+  "outputs": [
+    "src/model/types.ts",
+    "src/state/gallery.ts",
+    "src/storage/persistence.ts",
+    "src/components/InlineEdit.tsx",
+    "src/components/Header.tsx",
+    "src/components/SceneBar.tsx",
+    "src/components/ItemTray.tsx",
+    "src/components/Workbench.tsx",
+    "src/App.css",
+    "e2e/n3-edit.spec.ts",
+    "receipts/N3-S2/receipt-builder.md",
+    "receipts/N3-S2/review-evidence.md"
+  ],
+  "artifacts": [],
+  "generation": 25
+}

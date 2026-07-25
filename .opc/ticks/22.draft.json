@@ -1,0 +1,8 @@
+{
+  "narrative": "里程碑 N2（满屏沉浸外壳与场景自适应层）本轮验收：自动化 e2e（n2-shell.spec.ts）此前已过，剩一条人判条目——沉浸观感对齐 A2-旧信-沉浸.html 与 design.md v2、dock 收合把手不挤偏内容。独立检察员（强模型户头）实地跑起 npm run dev 的应用，逐条核对玻璃材质/让路动效/暗角与模糊补边/dock 收合四件事，结论 pass，写入 verdict，里程碑 N2 定稿为 done。",
+  "next_plan": "N3（编辑交互与管理全量）与 N4（双模式双端收口）尚无 sprint，下一轮大概率进入拆分轮，按团队流程全量读档拆出 sprint。",
+  "decisions": [
+    "独立检察员对 N2 沉浸观感人判条目定案 PASS，里程碑 N2 定稿 done"
+  ],
+  "outputs": []
+}

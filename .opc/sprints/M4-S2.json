@@ -1,0 +1,15 @@
+{
+  "milestone": "M4",
+  "goal": "把 e2e/m4-full.spec.ts 的主链路扩展到 768px 与 375px（横屏手机代表视口）跑通，三视口（PC/768px/375px）逐一验证无横向溢出、无 console 未捕获错误或未处理的 Promise 拒绝；修复发现的响应式布局问题；核验整体视觉还原「旧信」DNA。命令 npx playwright test e2e/m4-full.spec.ts --reporter=line 须 exit 0（覆盖三视口，非仅 PC）。【验收硬指标】milestones.json M4 criteria 原文：「全流程+双端 e2e：覆盖6条成功条件主链路，在 PC / 768px / 375px 三视口跑通；无横向溢出；无 console 未捕获错误或未处理的 Promise 拒绝」；manual 验收原文：「双端布局与整体视觉验收：横屏手机布局不错乱、元素不溢出遮挡；整体还原「旧信」DNA（配色/字体/间距/弹窗/手柄均走 tokens.css）」；success.json 原文：②「拖动/缩放/旋转顺滑：物件的拖动、缩放、旋转在 PC 与横屏手机上都跟手、不掉帧、无位置跳变」、⑥「双端可用：PC 与横屏手机都能完成「建场景→摆物件→写故事→切游客模式看故事」的完整流程，且布局不错乱」；design.md 响应式原文：「窄屏（≤880px）：抽屉转为横向滚动条、画布压低、弹窗改为贴底近满宽。手柄命中区放大到 --handle-hit。无横向溢出」。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "M4-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "独立复跑 npx playwright test e2e/m4-full.spec.ts --reporter=line 三次核验无flaky、跑全量11测试回归套件与生产构建、自写探针脚本（不复用建造员的）实测三视口横向溢出/console错误/未处理Promise拒绝断言、五档视口像素级测量手柄命中区与弹窗贴底尺寸、对故事弹窗做对抗性裁切证伪核查",
+      "evidence": "npx playwright test e2e/m4-full.spec.ts --reporter=line exit 0 且真覆盖PC/768px/375px三视口（非空跑）；全套件11 tests零回归、npm run build exit 0；响应式修复像素级坐实（手柄命中区PC 22px/窄屏24px、弹窗窄屏贴底近满宽）；DNA配色/字体/间距核对走tokens.css合规；App.css内4处既存硬编码色值属M1既过项非本sprint diff，非阻断项；详见 receipts/M4-S2/review-evidence.md",
+      "at_tick": 11
+    }
+  ]
+}

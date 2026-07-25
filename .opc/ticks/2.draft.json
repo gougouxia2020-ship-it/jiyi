@@ -1,0 +1,19 @@
+{
+  "narrative": "执行 sprint M1-S2：建造员（opus）在 M1-S1 的数据模型/持久化/素材库之上搭起应用外壳——Header、SceneBar、ItemTray、Canvas、Workbench 五块组件，实现创建/切换场景、背景不可重复约束（上限 3、第 4 个置灰提示素材已用完）、刷新后场景与布局状态经 M1-S1 persistence.ts 完整还原，视觉对齐 taste/examples/A-旧信.html 与 tokens.css 的暖奶油/衬线/陶土红「旧信」DNA；并补齐 Playwright 基建（playwright.config.ts、e2e/m1-shell.spec.ts）。评审员（sonnet）亲跑 npm run build 与 e2e 测试均 exit 0，逐句核对断言强度未放水，另起 dev server 截图核对视觉与 tokens.css diff，确认持久化复用 M1-S1 而非另起炉灶，判定 pass、证据落 receipts/M1-S2/review-evidence.md。sprint M1-S2 定稿（planned→running→done）。M1 的两个 sprint（M1-S1、M1-S2）均已定稿，主产出登记进画廊为 site 型产出 a-6542a7c2（npm run dev:5173），随后申报里程碑 M1 完成（milestone-claim，tick 2）。",
+  "next_plan": "下轮预检会转入 M1 的验收（acceptance-run）；M1 三条验收标准里有一条是人工判（视觉还原「旧信」DNA），机器判条目过后若命中人工判条目会挂 needs_inspector，需拉起独立检察员对照 A-旧信.html 与 tokens.css 原文定案。验收通过后进入 M2（拖拽入画布、角手柄缩放、顶部手柄旋转、移除，PC 与横屏手机统一手柄，placement 变换持久化）的拆分排期。",
+  "decisions": [],
+  "outputs": [
+    "src/App.tsx",
+    "src/App.css",
+    "src/state/gallery.ts",
+    "src/components/Header.tsx",
+    "src/components/SceneBar.tsx",
+    "src/components/ItemTray.tsx",
+    "src/components/Canvas.tsx",
+    "src/components/Workbench.tsx",
+    "e2e/m1-shell.spec.ts",
+    "playwright.config.ts",
+    "receipts/M1-S2/receipt-builder.md",
+    "receipts/M1-S2/review-evidence.md"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "seq": 20,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-16T19:11:05.800Z",
+  "ended_at": "2026-07-16T19:41:00.452Z",
+  "duration_seconds": 1795,
+  "decisions": [],
+  "outputs": [
+    "src/App.css",
+    "src/index.css",
+    "src/components/Canvas.tsx",
+    "receipts/N2-S1/receipt-builder.md",
+    "receipts/N2-S1/review-evidence.md"
+  ],
+  "artifacts": [],
+  "generation": 21
+}

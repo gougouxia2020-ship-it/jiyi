@@ -1,0 +1,25 @@
+{
+  "seq": 14,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-16T14:41:57.721Z",
+  "ended_at": "2026-07-16T15:15:02.187Z",
+  "duration_seconds": 1985,
+  "decisions": [],
+  "outputs": [
+    "backgrounds/reading-nook-wide-demo.jpg",
+    "src/assets/manifest.ts",
+    "src/model/types.ts",
+    "src/storage/persistence.ts",
+    "src/state/gallery.ts",
+    "src/components/Workbench.tsx",
+    "src/components/Canvas.tsx",
+    "scripts/check-asset-trim.mjs",
+    "e2e/n1-foundation.spec.ts",
+    "receipts/N1-S2/receipt-builder.md",
+    "receipts/N1-S2/review-evidence.md"
+  ],
+  "artifacts": [],
+  "generation": 14
+}

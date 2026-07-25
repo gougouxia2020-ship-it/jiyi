@@ -1,0 +1,14 @@
+{
+  "narrative": "预检指派 M3 拆分并轨：全量读档 idea.json（B1 数据模型/B5 故事编辑）、success.json（数据持久化、故事跨场景同步两条成功条件）、milestones.json 的 M3 criteria、taste/examples/design.md 的故事弹窗视觉规格，把 M3 拆成两个 sprint 一次批量落档——M3-S1（story 挂 Item、持久化、跨场景同步）与 M3-S2（半透明故事弹窗+编辑/游客双模式只读）。随即执行 M3-S1：建造员（opus，agentId ae340a7664f598d90）把 story 字段落在 Item 上、复用既有持久化机制、新增 StoryEditor.tsx 与 e2e/m3-story.spec.ts，npm run build 与全部 e2e 绿灯；评审员（sonnet，agentId a18fee0409164f5be）起 dev 服务器亲手实操建场景→摆物件→写故事→刷新还原→跨场景同步全链路，核对 types.ts 确认 story 挂 Item 不挂 Placement，核对 localStorage 结构验证双向同步、无 placement 漂移，一次通过未打回。M3-S1 定稿（advance done）。",
+  "next_plan": "下一轮预检应指派 execute 续跑 M3-S2：半透明故事弹窗（奶油底+backdrop-blur+陶土红描边+原始照片）与编辑/游客模式一键切换、游客模式只读不可编辑/拖动，补齐 e2e/m3-story.spec.ts 全链路。M3-S2 定稿后交付物齐，可申报 M3 完成待验收。",
+  "decisions": [
+    "M3 拆成 M3-S1（故事数据模型与持久化/跨场景同步）与 M3-S2（弹窗视觉与双模式）两个 sprint，按数据层→交互层的顺序切片，验收标准子集分别对齐",
+    "M3-S1 只做最小可用的故事编辑入口，不打磨最终弹窗视觉——视觉与游客模式只读收口留给 M3-S2，避免本 sprint 目标发散"
+  ],
+  "outputs": [
+    "sprints/M3-S1.json、sprints/M3-S2.json（拆分排期）",
+    "src/state/gallery.ts、src/components/StoryEditor.tsx、src/components/Canvas.tsx、src/App.css（story 字段与编辑入口）",
+    "e2e/m3-story.spec.ts（故事持久化与跨场景同步 e2e）",
+    "receipts/M3-S1/receipt-builder.md、receipts/M3-S1/review-evidence.md"
+  ]
+}

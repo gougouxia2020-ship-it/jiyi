@@ -1,0 +1,76 @@
+/* 念念陈列室 · 设计 DNA · tokens · 方向 A「旧信」
+ * Hallmark: genre=editorial · theme=Almanac(warm-cream) · accent=terracotta · display=high-contrast-serif
+ * 这些值与阶段一敲定的 demo（A-旧信.html）逐一对齐——工程照它做、品味验收拿它当尺，勿凭空改。
+ */
+:root{
+  /* —— 颜色 —— */
+  --color-sand:#e7dcc7;          /* 最外层·暖沙背景 */
+  --color-paper:#f4ecdd;         /* 应用纸面 */
+  --color-paper-2:#f7efe0;       /* 抽屉/浅分区底 */
+  --color-card:#fbf6ec;          /* 卡片/物件缩略底 */
+  --color-ink:#2c2620;           /* 主文字·深褐 */
+  --color-ink-soft:#6b6152;      /* 次文字·灰褐 */
+  --color-line:#d9cdb6;          /* 描边·暖 */
+  --color-accent:#a8572f;        /* 强调·陶土红（选中/手柄/CTA/kicker）*/
+  --color-accent-soft:#c98a5b;
+  --color-accent-tint:#fbeee2;   /* 强调浅底（激活态 chip）*/
+  --color-popup:rgba(250,244,232,.87);      /* 半透明弹窗底（需配 backdrop-blur）*/
+  --color-popup-line:rgba(168,87,47,.42);   /* 弹窗描边 */
+
+  /* —— 字体（两族：衬线展示 + 系统无衬线 UI）—— */
+  --font-serif:Georgia,"Songti SC","Times New Roman",serif;             /* 品牌/标题/故事正文 */
+  --font-sans:system-ui,-apple-system,"PingFang SC","Helvetica Neue",sans-serif; /* UI 标签/按钮/说明 */
+
+  /* —— 字阶 —— */
+  --text-brand:20px;  --text-title:22px;  --text-body:14.5px;
+  --text-label:11px;  --text-kicker:10.5px; --text-meta:11.5px;
+
+  /* —— 间距（4pt 基）—— */
+  --space-xs:6px; --space-sm:10px; --space-md:16px; --space-lg:22px;
+
+  /* —— 圆角 —— */
+  --radius-sm:6px; --radius-md:10px; --radius-lg:12px; --radius-pill:999px;
+
+  /* —— 描边 / 变换手柄 —— */
+  --rule:1px;
+  --handle-size:12px;
+  --handle-bg:#fbf6ec;
+  --handle-border-w:1.6px;         /* 手柄描边宽·陶土红 */
+  --handle-hit:24px;               /* 手柄触摸命中区（横屏手机）*/
+
+  /* —— 动效 —— */
+  --dur-fast:.18s;
+  --ease-out:cubic-bezier(.22,.61,.36,1);
+
+  /* —— 阴影 —— */
+  --shadow-card:0 6px 16px -8px rgba(60,40,20,.40);
+  --shadow-float:0 22px 48px -16px rgba(60,40,20,.60);
+  --shadow-item:drop-shadow(0 12px 16px rgba(0,0,0,.45)); /* 摆放物件的投影（跟随抠图轮廓）*/
+  --canvas-inset:inset 0 0 90px rgba(40,25,10,.35);       /* 画布暗角 */
+}
+
+/* ============================================================
+ * v2 增补 · 方向 A2「旧信 · 沉浸」（调向敲定，与 A2-旧信-沉浸.html 逐一对齐）
+ * 满屏沉浸外壳三件套：浮层玻璃 / Canva 式手柄 / 场景自适应层。
+ * ============================================================ */
+:root{
+  /* —— 浮层玻璃（报头/场景条/物件 dock/小工具条的统一材质）—— */
+  --glass-bg:rgba(250,244,232,.78);       /* 玻璃底·半透明奶油 */
+  --glass-bg-soft:rgba(250,244,232,.58);  /* 更透的一档（提示条等） */
+  --glass-line:rgba(226,213,190,.75);     /* 玻璃描边 */
+  --glass-blur:16px;                      /* backdrop-blur 半径 */
+  --shadow-glass:0 10px 34px -14px rgba(40,25,10,.5);
+
+  /* —— 手柄 v2（Canva 式：白圆点＋旋转钮＋浮动小工具条）—— */
+  --h2-size:13px;                         /* 角手柄圆点直径 */
+  --h2-bg:#ffffff;
+  --h2-line:rgba(62,46,30,.32);
+  --h2-shadow:0 1px 5px rgba(20,12,4,.38);
+  --sel-line:rgba(168,87,47,.95);         /* 选框描边·陶土红 */
+  --h2-hit:26px;                          /* 触摸命中区（视觉尺寸不变） */
+
+  /* —— 工艺底线 —— */
+  --text-label-min:11px;                  /* UI 标签/分区标题字号下限（低于此判不合格） */
+}
+/* v1 的 --handle-size/--handle-bg/--handle-border-w/--handle-hit 自 v2 起退役，
+ * 仅留档；工程一律用 --h2-* 与 --sel-line。 */

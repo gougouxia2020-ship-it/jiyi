@@ -1,0 +1,15 @@
+{
+  "milestone": "N3",
+  "goal": "目标白话：把变换手柄换成 Canva 风格，并让 dock 拖出→挪位→缩放→旋转→移除→写故事这条编辑全链路在新手柄上跑通、持久化正确。本 sprint 不做场景/物件重命名与删除、不做陈列室名就地编辑，那些留给 N3-S2；暂不跑 e2e/n3-edit.spec.ts 全量（milestone 级验收留给收口 sprint 一并跑通）。【验收硬指标】抄自 milestones.json N3.goal / N3 criteria / design.md v2 手柄段 / tokens.css v2 / phase1/success.json：选中态＝陶土红细选框（--sel-line）+ 四角白色圆点手柄（--h2-size 白底 --h2-bg、描边 --h2-line、投影 --h2-shadow）等比缩放 + 选框正下方旋转圆钮（真旋转图标 SVG，不用⟳字符）；「故事」「删除」等操作收进选中时浮出的毛玻璃小工具条（真 SVG 图标，恒水平，悬于选框上方，为置顶/复制等后续操作留口子）；触摸命中区一律 ≥ --h2-hit（26px，视觉尺寸不放大）；字符图标（⟳/✎/×）自 v2 起判不合格（design.md v2 手柄段原文）。dock 拖入→挪位→角手柄缩放→旋转钮旋转→工具条移除的全链路可用，PC 与横屏手机跟手、不掉帧、无位置或角度跳变（success.json 条目4：选中态仍出现字符图标手柄、触屏点不中任一手柄、或操作中出现肉眼可见掉帧或跳变，即判失败）；placement(x,y,scale,rotation,z) 刷新后完整还原。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "N3-S1",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "实地核查Canvas.tsx/App.css选框与手柄样式；跑build与n2-shell.spec.ts(12/12全绿)；独立编写临时脚本手动跑通拖入→挪位→缩放→旋转→写故事→刷新还原→移除全链路并逐字段核对；代码走查m2-transform.spec.ts两处历史失败的根因（Workbench.tsx落点判定=N2遗留、坐标断言公式与data-scale属性=N1遗留）核实与本轮无关",
+      "evidence": "陶土红选框(--sel-line)、四角白圆点(--h2-size/bg/line/shadow)、命中区经::after撑到26px且可见手柄未放大、真SVG旋转钮居选框正下方、恒水平毛玻璃工具条（挂stage__item而非stage__tf）均达标，无⟳/✎/×字符残留；详见 receipts/N3-S1/review-evidence.md",
+      "at_tick": 23
+    }
+  ]
+}

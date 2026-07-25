@@ -1,0 +1,14 @@
+{
+  "narrative": "执行 sprint M4-S2：建造员把 e2e/m4-full.spec.ts 从只覆盖 PC 视口扩展到 PC/768px/375px 三视口跑通同一条主链路，逐视口断言无横向溢出、无 console 未捕获错误与未处理 Promise 拒绝；过程中发现并修复两处响应式/DNA 缺陷——src/index.css 里 #root 未占满宽度导致 PC 布局问题、src/App.css 里窄屏手柄命中区偏小，已放大到 --handle-hit 并核对走 tokens.css。首次派工误用了低档位模型（漏带 model 参数），被写档时的模型声明硬校验拦下后，改由 opus 档位的建造员重新独立核验并收尾，确认改动均真做真对；评审员 reviewer 独立复跑三视口命令与全量回归、自写探针核验响应式像素细节，判定 pass，未发现需打回项。sprint M4-S2 定稿，M4 两个 sprint（M4-S1/M4-S2）均已 done，团队按流程申报里程碑 M4 完成，主产出登记为画廊 artifact 「念念·陈列室 M4：全流程+双端收口」（a-e457b65f，site 型）。",
+  "next_plan": "M4 已申报完成（claimed_at_tick=11），尚未经过独立验收；下一轮预检预期给出 acceptance 动作，届时对里程碑 M4 的验收标准（e2e 命令闸 + 双端布局/整体视觉 DNA 的人判条目）跑 acceptance-run，若命中人判条目再按流程拉检察员定案。",
+  "decisions": [
+    "首次派工遗漏 model 参数、误用低档位模型的问题已就地纠正：改走 opus 档位重新核验收尾，并如实按实际拉起档位记账（builder=opus, reviewer=sonnet）"
+  ],
+  "outputs": [
+    "e2e/m4-full.spec.ts（扩展为三视口参数化）",
+    "src/index.css（#root 满宽修复）",
+    "src/App.css（窄屏手柄命中区放大）",
+    "receipts/M4-S2/receipt-builder.md",
+    "receipts/M4-S2/review-evidence.md"
+  ]
+}

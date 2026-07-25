@@ -1,0 +1,17 @@
+{
+  "seq": 26,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-17T00:07:13.957Z",
+  "ended_at": "2026-07-17T00:38:03.986Z",
+  "duration_seconds": 1851,
+  "decisions": [],
+  "outputs": [
+    "e2e/n4-full.spec.ts",
+    "receipts/N4-S1/receipt-builder.md",
+    "receipts/N4-S1/review-evidence.md"
+  ],
+  "artifacts": [],
+  "generation": 27
+}

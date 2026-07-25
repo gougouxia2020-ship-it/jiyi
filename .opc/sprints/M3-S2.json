@@ -1,0 +1,15 @@
+{
+  "milestone": "M3",
+  "goal": "点物件弹出半透明故事弹窗（含原始图片），编辑↔游客模式一键切换，游客模式只读——点物件只弹故事+原图、不可编辑故事、不可拖动/缩放/旋转/移除；补齐 e2e/m3-story.spec.ts 全链路并核验双模式视觉。【验收硬指标】taste/examples/design.md 原文：“故事弹窗（本次敲定的关键）：半透明奶油弹窗浮于画布之上，--color-popup + backdrop-filter: blur(9px)，透出背后房间；陶土红描边、--shadow-float；内含 ✕ 关闭、‘它的故事’ kicker、衬线标题、meta、故事正文、‘原始照片’缩略。不占用画布宽度、不做右侧常驻面板”；交互铁律原文：“故事 = 点物件弹半透明弹窗；再点空白/✕ 关闭”“模式 = 编辑（全功能）↔ 游客（只读，点物件只弹故事+原图）”；milestones.json M3 criteria 原文：“故事与双模式 e2e：选中物件写故事→刷新后还原→同一物件在另一场景故事同步更新→切游客模式点物件只弹故事+原图且不可编辑/移动”——落成 e2e/m3-story.spec.ts 全链路，命令 npx playwright test e2e/m3-story.spec.ts --reporter=line 须 exit 0；游客模式下物件不得出现选中态手柄、不得响应拖拽。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "M3-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲自跑 playwright e2e/m3-story.spec.ts 与全量回归、逐段核对 e2e 四步链路源码是否齐全、逐条核对 StoryModal.tsx/Canvas.tsx/App.css 视觉硬指标数值是否对齐 design.md/tokens.css/A-旧信.html、代码级核查游客模式只读守卫(UI条件渲染+reducer双重守卫)有无绕过口子、独立实测并交叉验证441px外壳收窄问题是否与本次改动相关",
+      "evidence": "e2e/m3-story.spec.ts 3 passed exit 0 且四步链路（写故事→刷新还原→跨场景同步→游客模式只读）逐段核对齐全；全量 e2e 8 passed 无回归；故事弹窗视觉逐条数值对齐设计稿与 tokens；游客只读约束经代码级核查无绕过口子；441px 外壳收窄经独立实测约485-490px，与 M2-S2 历史记录交叉验证成立，判定与本次改动无关、不在本 sprint 验收范围内，不构成打回理由；详细核查过程见 receipts/M3-S2/review-evidence.md",
+      "at_tick": 8
+    }
+  ]
+}

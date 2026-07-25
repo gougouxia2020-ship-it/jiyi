@@ -1,0 +1,25 @@
+{
+  "seq": 36,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-17T12:50:24.919Z",
+  "ended_at": "2026-07-17T13:19:28.208Z",
+  "duration_seconds": 1744,
+  "decisions": [],
+  "outputs": [
+    "src/upload/processor.ts",
+    "src/upload/normalize.ts",
+    "src/upload/pipeline.ts",
+    "src/upload/UploadEntry.tsx",
+    "src/state/gallery.ts",
+    "src/components/ItemTray.tsx",
+    "src/components/Workbench.tsx",
+    "src/App.css",
+    "e2e/u2-s1-upload-selftest.spec.ts",
+    "receipts/U2-S1/receipt-builder.md",
+    "receipts/U2-S1/review-evidence.md"
+  ],
+  "artifacts": [],
+  "generation": 38
+}

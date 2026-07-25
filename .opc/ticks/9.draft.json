@@ -1,0 +1,8 @@
+{
+  "narrative": "本轮验收 M3（物件故事与编辑/游客双模式）。acceptance-run 判出一条人判条目——故事弹窗视觉是否还原「旧信」DNA——拉起独立检察员会话（agent a803f521ae768b167，opus 强模型，只看验收标准原文与 taste 基准文件，不采信团队自证材料）：实地跑 npm run dev 打开应用，在编辑模式选中画布物件写故事、保存后点击弹出故事弹窗并截图核验，再切游客模式复核只读态。逐项实测：--color-popup 高不透明度奶油底透出背后画布、backdrop-filter 模糊背景明显、kicker/描边/CTA 为陶土红、标题正文 Georgia 衬线、弹窗内含原始照片缩略图已加载、position absolute 浮层不占画布宽度，六要素全部通过，判 PASS 无 failed 项。里程碑 M3 状态流转 planned→verifying→done。",
+  "next_plan": "M4（收口·全流程 + 双端达标）尚未拆分排期，下一轮预检预期给出 split 或 split-and-execute 动作，届时按第一节铁律全量读档（idea.json/success.json/taste/ 与 M4 验收标准原文）拆出带【验收硬指标】段的 sprint。",
+  "decisions": [
+    "独立检察员对 M3 唯一人判条目（故事弹窗视觉）定案 PASS，里程碑 M3 定稿"
+  ],
+  "outputs": []
+}

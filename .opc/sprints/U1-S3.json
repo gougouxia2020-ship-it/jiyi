@@ -1,0 +1,15 @@
+{
+  "milestone": "U1",
+  "goal": "补齐里程碑 U1 验收标准点名却始终缺失的 e2e 文件 e2e/u1-foundation.spec.ts：不改动任何已过评审的实现代码（reconcileItems、imageStore、persistence 的 schema v4 与 saveState 报错冒泡都已到位），只新建这一个测试文件，把验收标准四点一次性落成可跑通的 Playwright 断言。【验收硬指标】milestones.json U1 criteria[1] 原文：双源目录与 v4 持久化 e2e：注入一件用户物件，刷新后它仍在（不被 reconcileItems 丢弃）；内置 14 件仍对齐清单；预置 v3 旧数据启动不崩、按作废重置；图片二进制落在 IndexedDB，LocalStorage 里查不到图片二进制或 base64。对应的机器验收命令：npx playwright test e2e/u1-foundation.spec.ts --reporter=line，expect_exit 0。四点逐条验收：①在 loadState 注入一个不在内置清单里的 user Item，reconcile 后该 Item 必须仍出现在 dock（可参照 e2e/u1-s1-dualsource.spec.ts 的注入与断言写法）；②内置 14 件仍与 manifest 对齐、逐件出现在 dock（同上参照）；③预置一份 schemaVersion=3 的旧状态启动应用，页面须正常渲染、无 pageerror/console.error，且不得读出 v3 旧数据本身（按既有的作废重置路径处理，回到初始态，不得刷新后复现 v3 的场景/物件/摆放数据）；④图片二进制须写进 IndexedDB（memories.images 库）、LocalStorage 序列化内容里查不到该图片的二进制或 base64（可参照 e2e/u1-storage-error.spec.ts 第②个 test 的注入与 IndexedDB 核验写法）。四条断言跑通、npm run build 仍 exit 0、且不引入新的全量回归失败，即为完成。",
+  "reviews": [
+    {
+      "sprint": "U1-S3",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "通读四个test逐条对照criteria[1]四点；亲手跑e2e/u1-foundation.spec.ts确认4 passed exit0；用文件mtime核对src/e2e/scripts下本sprint开工后(sprint文件mtime 20:16:24)唯一新增文件即该测试文件，实现代码(persistence.ts/imageStore.ts/types.ts/manifest.ts/App.tsx/ItemTray.tsx)mtime均早于sprint开工、未被改动；亲手跑npm run build确认exit0；亲手跑全量套件两次(加新文件与移出新文件做基线对比)独立复现失败集合；细读点③raw字符串断言实现",
+      "evidence": "npx playwright test e2e/u1-foundation.spec.ts: 4 passed exit0；npm run build: built in 322ms exit0；全量套件加新文件33 passed/9 failed exit1，移出新文件基线29 passed/9 failed exit1，diff两次失败列表结果IDENTICAL FAILURE SETS；find src e2e scripts -newer .opc/sprints/U1-S3.json 只命中e2e/u1-foundation.spec.ts；test③第220-227行对raw LocalStorage原始字符串做5个v3标记串排除检查(非仅字段检查)",
+      "at_tick": 34
+    }
+  ],
+  "status": "done"
+}

@@ -1,0 +1,15 @@
+{
+  "seq": 15,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-16T15:16:56.494Z",
+  "ended_at": "2026-07-16T15:22:16.104Z",
+  "duration_seconds": 320,
+  "decisions": [
+    "里程碑 N1 验收不通过：横版书房图饱和度过高、不成一组，判定归独立检察员"
+  ],
+  "outputs": [],
+  "artifacts": [],
+  "generation": 15
+}

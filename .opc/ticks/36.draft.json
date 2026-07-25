@@ -1,0 +1,18 @@
+{
+  "narrative": "里程碑「U2」拆分并轨：本轮先把 U2 拆成 U2-S1（上传管线与处理接口主链路）与 U2-S2（接入既有拖放/写故事/持久化全链路＋补齐官方三份验收 e2e）两个 sprint 一次批量落档，随即执行首个 sprint U2-S1——建造员交付 src/upload/{processor.ts,normalize.ts,pipeline.ts,UploadEntry.tsx} 与 state/gallery.ts 新增的 add-item 动作，把 dock 选图→EXIF 校正/长边降采样至 ≤1600px/重编码→【处理接口】（本期恒等直通）→测宽高比→预览确认→入库这条主链路打通，接口以可整体替换的模块形态留好抠图/风格化的插入点；评审员亲跑 build 与自测（4000×3000 EXIF 竖拍图落库不崩、灰度反例仅换第二参即变灰且零改上下游、预览取消不入库）核验无误，判定 pass，sprint U2-S1 定稿为 done。",
+  "next_plan": "下一轮预检若给 execute 动作，执行 sprint U2-S2：把 U2-S1 做出的上传物件接入既有拖放/写故事/跨场景同步/刷新持久化全链路跑通端到端，并新建 e2e/u2-upload.spec.ts、e2e/u2-large-image.spec.ts、e2e/u2-seam.spec.ts 三份里程碑官方验收 e2e 覆盖 U2 的三条验收标准；U2-S2 完成后里程碑 U2 交付物齐，可申报完成走验收。",
+  "decisions": [],
+  "outputs": [
+    "src/upload/processor.ts",
+    "src/upload/normalize.ts",
+    "src/upload/pipeline.ts",
+    "src/upload/UploadEntry.tsx",
+    "src/state/gallery.ts",
+    "src/components/ItemTray.tsx",
+    "src/components/Workbench.tsx",
+    "src/App.css",
+    "e2e/u2-s1-upload-selftest.spec.ts",
+    "receipts/U2-S1/receipt-builder.md",
+    "receipts/U2-S1/review-evidence.md"
+  ]
+}

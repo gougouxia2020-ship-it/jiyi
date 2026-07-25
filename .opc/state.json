@@ -1,0 +1,9 @@
+{
+  "phase": "steering",
+  "paused": false,
+  "incident": null,
+  "ledger_gap": false,
+  "active_milestone": "E2",
+  "active_sprint": null,
+  "tick_seq": 56
+}

@@ -1,0 +1,15 @@
+{
+  "milestone": "M1",
+  "goal": "搭起应用外壳（报头 + 模式开关 + 场景条 + 物件抽屉 + 画布），接上 M1-S1 的数据模型与素材库，实现创建/切换场景、背景不可重复约束（上限 3，用尽置灰提示），刷新后场景与布局状态完整还原；整体视觉对齐「旧信」DNA。【验收硬指标】生产构建通过（npm run build exit 0，无类型错误）；e2e 用例 npx playwright test e2e/m1-shell.spec.ts --reporter=line 通过、exit 0，覆盖：建场景→切场景→刷新后场景与布局状态完整还原、物件抽屉列出 14 件、场景背景不可重复且最多 3 个（建到第 4 个被阻止并置灰提示“素材已用完”）；视觉还原「旧信」DNA：暖奶油纸底、衬线品牌/场景名、陶土红唯一强调色，Workbench 布局（报头+场景条+[抽屉|画布]），对齐 taste/examples/A-旧信.html 与 tokens.css。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "M1-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲跑 npm run build（exit 0，tsc -b strict 全开）；亲跑 npx playwright test e2e/m1-shell.spec.ts --reporter=line（3 passed exit 0）并逐句核对断言强度（刷新前后 placement inline style 逐字节相等、bg-picker 剩余选项数逐步递减、add-scene toBeDisabled+提示文案精确匹配）；另起 dev server 用独立 Playwright 脚本截图 5 态（空态/放物件/3场景用尽/游客/窄屏400px）肉眼比对 A-旧信.html 与 tokens.css；diff src/styles/tokens.css 与 taste/examples/tokens.css 确认值未被凭空改动；脚本读取 localStorage 确认只有 memories.gallery 一个键、走 M1-S1 persistence.ts；连点14件物件+切换模式监听 console/pageerror 确认无运行时报错。",
+      "evidence": "build BUILD_EXIT=0；e2e 3 passed E2E_EXIT=0；tokens.css diff 仅多一行来源注释、数值逐字节相同；localStorage keys=[\"memories.gallery\"]与STORAGE_KEY常量一致；截图确认暖奶油/衬线/陶土红唯一强调/Workbench布局/窄屏横向滚动均达标；详细证据见 receipts/M1-S2/review-evidence.md",
+      "at_tick": 2
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "seq": 32,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-17T12:09:12.750Z",
+  "ended_at": "2026-07-17T12:10:19.935Z",
+  "duration_seconds": 68,
+  "decisions": [],
+  "outputs": [],
+  "artifacts": [],
+  "generation": 34
+}

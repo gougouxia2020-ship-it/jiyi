@@ -1,0 +1,17 @@
+{
+  "seq": 17,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-16T15:31:07.525Z",
+  "ended_at": "2026-07-16T15:47:21.088Z",
+  "duration_seconds": 974,
+  "decisions": [],
+  "outputs": [
+    "backgrounds/reading-nook-wide-demo.jpg",
+    "receipts/N1-S3/receipt-builder.md",
+    "receipts/N1-S3/review-evidence.md"
+  ],
+  "artifacts": [],
+  "generation": 17
+}

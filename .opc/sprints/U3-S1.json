@@ -1,0 +1,15 @@
+{
+  "milestone": "U3",
+  "goal": "给用户上传的物件补上删除能力，让它真正做到与内置物件平权收尾：新增一个删除入口（仅对用户物件出现，内置14件不可有此入口），删除一件用户物件后，它在所有场景里的摆放要一并清空、IndexedDB里对应的图片二进制要一并清除，刷新页面后既不出现物件本身也不出现摆放残影；同时逐项复核已有的挪位、缩放、旋转、写故事、重命名、跨场景故事同步这些操作对用户物件是否和内置物件行为一致（这些能力多数已在M2/N3落地，本sprint是查漏，若真发现某项对用户物件失效或行为不一致则一并修）。\n【验收硬指标】milestones.json U3 目标原文：用户物件平权、配额与管理：上传来的物件与内置14件平权——能拖入场景、挪位、缩放、旋转、写故事、重命名、跨场景摆放且故事同步；此外可删除（内置14件不可删），删除后它在所有场景的摆放一并消失、IndexedDB里的图片被清除、刷新不复活。success.json 原文（平权）：用户物件与内置14件平权：上传来的物件能拖入场景、挪位、缩放、旋转、写故事、重命名、跨场景摆放且故事同步——内置物件能做的它都能做；此外还能删除（内置14件不可删）；逐项对一件上传物件施加内置物件的全部操作，任一项不可用或行为不一致；或上传物件删不掉；或内置物件出现了删除入口，即判失败。success.json 原文（删除干净不留尸）：删除一件用户物件后，它在所有场景里的摆放一并消失，IndexedDB里对应的图片数据被清除，且刷新后不复活；把同一件上传物件摆进两个场景后删除它，若任一场景仍留有该物件或其残影、或刷新后它又出现、或IndexedDB里仍查得到该图片记录，即判失败。验收对应本轮里程碑验收标准中的 e2e/u3-parity.spec.ts 一条；配额与游客只读留给下一sprint。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "U3-S1",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "读完角色/技能档案、milestones.json U3、success.json、U3-S1.json goal、receipt-builder.md后，亲手读代码（gallery.ts的delete-item reducer、Workbench.tsx的handleDeleteItem、ItemTray.tsx的ItemDelete、imageStore.ts的deleteImage、persistence.ts的引用键推导），并亲自跑npm run build、npx playwright test e2e/u3-s1-parity-selftest.spec.ts、全量playwright套件",
+      "evidence": "ItemTray.tsx 253行item.source===user才渲染删除入口、reducer 264行同源二次拒绝内置件；delete-item对placements按itemId过滤（不限场景）+ Workbench用与persistence.ts一致的键推导调用deleteImage，测试实测两场景摆放消失+IndexedDB归零+刷新不复活；六个变换类reducer case均无source分支，用户件与内置件同路径；.thumb-del/.thumb-confirm复用--glass-*/--color-accent/--text-label-min token；build exit0；自证spec 3 passed；全量43 passed/9 failed，9条经跨轮证据链核实为历史欠账非本轮引入",
+      "at_tick": 39
+    }
+  ]
+}

@@ -1,0 +1,906 @@
+[
+  {
+    "id": "M1",
+    "artifact_required": true,
+    "goal": "地基与外壳跑起来：Vite+React+TS 工程可生产构建、可启动；数据模型（Scene / Item / Placement）+ LocalStorage 持久化就位；内置素材库枚举出 3 张背景 + 14 件物件；应用外壳（报头 + 模式开关 + 场景条 + 物件抽屉 + 画布）渲染，能创建/切换场景，刷新后状态还原。",
+    "criteria": [
+      {
+        "desc": "生产构建通过：Vite 生产构建成功、无类型错误。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      },
+      {
+        "desc": "外壳与持久化 e2e：建场景→切场景→刷新后场景与布局状态完整还原；物件抽屉列出 14 件；场景背景不可重复且最多 3 个（建到第 4 个被阻止）。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/m1-shell.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 120000
+        }
+      },
+      {
+        "desc": "外壳视觉还原「旧信」DNA：暖奶油纸底、衬线品牌/场景名、陶土红唯一强调、Workbench(报头+场景条+[抽屉|画布]) 布局，对齐 A-旧信.html 与 tokens.css。",
+        "manual": true
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "M1",
+        "pass": true,
+        "failed": []
+      }
+    ]
+  },
+  {
+    "id": "M2",
+    "artifact_required": true,
+    "goal": "核心变换交互顺滑：物件可从抽屉拖入画布，可拖动改位、角手柄缩放、顶部手柄旋转、移除；变换经 CSS transform；PC 与横屏手机统一用手柄；placement(x,y,scale,rotation,z) 持久化，刷新完整还原。",
+    "criteria": [
+      {
+        "desc": "变换交互 e2e：物件从抽屉拖入→拖动改位→角手柄缩放→顶部手柄旋转→移除→刷新后 placement(x,y,scale,rotation,z) 完整还原。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/m2-transform.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 120000
+        }
+      },
+      {
+        "desc": "顺滑手感：拖/缩/转跟手、无肉眼可见掉帧或位置/角度跳变、手柄命中准；在 PC 与横屏手机各验一遍。",
+        "manual": true
+      },
+      {
+        "desc": "变换仅走 transform/opacity、不触发布局重排（合成层 + requestAnimationFrame 提交）。",
+        "manual": true
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "M2",
+        "pass": true,
+        "failed": []
+      }
+    ]
+  },
+  {
+    "id": "M3",
+    "artifact_required": true,
+    "goal": "物件故事与编辑/游客双模式：选中物件写/改故事（故事挂物件本身、跨场景同步）；点物件弹出半透明故事弹窗（含原始图片）；编辑↔游客一键切换；游客模式只读，点物件只弹故事+原图、不能编辑；故事持久化。",
+    "criteria": [
+      {
+        "desc": "故事与双模式 e2e：选中物件写故事→刷新后还原→同一物件在另一场景故事同步更新→切游客模式点物件只弹故事+原图且不可编辑/移动。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/m3-story.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 120000
+        }
+      },
+      {
+        "desc": "故事弹窗视觉：半透明奶油底 + backdrop-blur 透出背后画布、陶土红衬线、含原始照片，浮于画布之上不占画布宽度，还原「旧信」DNA。",
+        "manual": true
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "M3",
+        "pass": true,
+        "failed": []
+      }
+    ]
+  },
+  {
+    "id": "M4",
+    "artifact_required": true,
+    "goal": "收口·全流程 + 双端达标：覆盖 6 条成功条件的端到端全流程在 PC 与横屏手机都跑通、布局不错乱；整体还原「旧信」DNA；无横向溢出、无未捕获运行时错误。",
+    "criteria": [
+      {
+        "desc": "全流程 + 双端 e2e：覆盖 6 条成功条件主链路，在 PC / 768px / 375px 三视口跑通；无横向溢出；无 console 未捕获错误或未处理的 Promise 拒绝。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/m4-full.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      },
+      {
+        "desc": "双端布局与整体视觉验收：横屏手机布局不错乱、元素不溢出遮挡；整体还原「旧信」DNA（配色/字体/间距/弹窗/手柄均走 tokens.css）。",
+        "manual": true
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "M4",
+        "pass": true,
+        "failed": []
+      }
+    ]
+  },
+  {
+    "id": "N1",
+    "artifact_required": false,
+    "goal": "素材与数据地基（回炉第一块）：14 张物件 PNG 经 alpha 阈值裁边（烘焙软阴影不算实体）、四边透明边 ≤8px、素材清单同步真实宽高比；新增横版书房场景图（横向构图、分辨率与客厅同量级）替换竖图为默认书房；存储 schema 升 v2——placement 坐标改为场景图坐标系百分比、旧像素数据作废不迁移（应用遇 v1 数据不崩、清空重摆）、Item.story 结构保留；工程可生产构建。",
+    "criteria": [
+      {
+        "desc": "生产构建通过：Vite 生产构建成功、无类型错误。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      },
+      {
+        "desc": "素材裁切达标：校验脚本逐张测 14 张物件 PNG，四边透明边 ≤8px、清单标注宽高比与实体一致（含新横版书房图存在且为横向）。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "node",
+            "scripts/check-asset-trim.mjs"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 60000
+        }
+      },
+      {
+        "desc": "schema v2 e2e：百分比坐标读写与刷新还原；预置 v1 旧数据启动不崩、按作废处理；故事字段结构保留。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/n1-foundation.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 120000
+        }
+      },
+      {
+        "desc": "横版书房图对味：暖调胶片质感与客厅/卧室成一组，还原「旧信」气质。",
+        "manual": true
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "N1",
+        "pass": false,
+        "failed": [
+          "横版书房图对味：暖调胶片质感与客厅/卧室成一组，还原「旧信」气质——书房图饱和度(约49.8%)显著高于客厅(14.7%)与卧室(37%)，书架彩色书脊与高饱和抱枕呈鲜艳数码直出感，缺胶片颗粒/褪色质感，与客厅的低饱和空气感、卧室的褪色胶片调不成一组，未还原设计文档定义的低饱和旧纸「旧信」气质"
+        ]
+      },
+      {
+        "milestone": "N1",
+        "pass": true,
+        "failed": []
+      }
+    ],
+    "fail_count": 0
+  },
+  {
+    "id": "N2",
+    "artifact_required": true,
+    "goal": "满屏沉浸外壳与场景自适应层：场景铺满视口（无定宽留白、无元素堆角、无横向滚动）；任意比例场景 contain 居中＋同图模糊补边不截断；物件按百分比锚定（窗口任意缩放钉在房间同一相对位置）；毛玻璃浮层四件套（品牌章/模式开关＋隐藏界面钮/场景条/物件 dock）；dock 可收合且视觉居中；拖动时浮层整体让路；UI 标签字号 ≥11px。",
+    "criteria": [
+      {
+        "desc": "外壳与自适应 e2e：1280/1920/2560 与横屏手机视口均无横向溢出、外壳铺满；缩放窗口后物件相对场景位置不变；竖图场景图面完整可见；拖动中浮层不接指针且物件可落点在浮层常驻区。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/n2-shell.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      },
+      {
+        "desc": "沉浸观感验收：玻璃材质/让路动效/暗角与模糊补边对齐 A2-旧信-沉浸.html 与 design.md v2；dock 收合把手不挤偏内容。",
+        "manual": true
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "N2",
+        "pass": true,
+        "failed": []
+      }
+    ]
+  },
+  {
+    "id": "N3",
+    "artifact_required": true,
+    "goal": "编辑交互与管理全量：Canva 式手柄（陶土红细选框＋四角白圆点缩放＋下方旋转圆钮＋浮动毛玻璃工具条·真 SVG 图标）；dock 拖出新物件、挪位/缩放/旋转/移除/写故事全链路；管理与命名——场景重命名与删除（删除释放背景配额可再建）、物件重命名（挂 Item 跨场景同步）、陈列室名就地编辑；全部持久化。",
+    "criteria": [
+      {
+        "desc": "编辑与管理 e2e：dock 拖入→挪位→角手柄缩放→旋转钮旋转→工具条移除；场景重命名/删除后配额释放可再建；物件重命名跨场景同步；陈列室名就地编辑；以上刷新后全还原。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/n3-edit.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      },
+      {
+        "desc": "手感验收：拖/缩/转在 PC 与横屏手机跟手、不掉帧、无跳变；手柄触摸可命中（≥ --h2-hit）；无字符图标残留。",
+        "manual": true
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "N3",
+        "pass": true,
+        "failed": []
+      }
+    ]
+  },
+  {
+    "id": "N4",
+    "artifact_required": true,
+    "goal": "双模式、双端与收口：游客模式（浮层收到最简、点物件只读弹故事＋原图）；故事弹窗适配满屏与窄屏（贴底近满宽）；覆盖 9 条成功条件的端到端全流程在 PC 与横屏手机跑通；无 console 未捕获错误、无横向溢出；整体还原「旧信 · 沉浸」DNA。",
+    "criteria": [
+      {
+        "desc": "全流程收口 e2e：覆盖 9 条成功条件主链路，在 PC（1920）与横屏手机（844×390）双视口跑通；无横向溢出；无 console 未捕获错误或未处理 Promise 拒绝。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/n4-full.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 240000
+        }
+      },
+      {
+        "desc": "终验：双端视觉不错乱；整体气质对尺 design.md v2 与 tokens.css v2（含工艺底线：字号下限、选框贴实物）。",
+        "manual": true
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "N4",
+        "pass": true,
+        "failed": []
+      }
+    ]
+  },
+  {
+    "id": "U1",
+    "artifact_required": false,
+    "goal": "数据与存储地基（三版第一块）：物件目录从编译期焊死的 14 件改为双源（内置清单 ＋ 用户物件），Item 带来源标记（builtin/user）、运行时宽高比、以及「原图 / 展示图」两个位（本期指向同一张）；修掉 persistence.ts 的 reconcileItems——它现在拿内置清单当基准 map，读回时会把不在清单上的用户物件直接丢弃；照片二进制（Blob）存 IndexedDB，状态树仍走 LocalStorage 但只存引用、不存图；存储 schema 升 v4，旧版数据照旧不迁移、作废重置、应用不崩；终结 saveState 的静默失败（现为空 catch）——写入失败必须能被上层捕获并冒泡，不再无声吞掉数据；工程可生产构建。",
+    "criteria": [
+      {
+        "desc": "生产构建通过：Vite 生产构建成功、无类型错误。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      },
+      {
+        "desc": "双源目录与 v4 持久化 e2e：注入一件用户物件，刷新后它仍在（不被 reconcileItems 丢弃）；内置 14 件仍对齐清单；预置 v3 旧数据启动不崩、按作废重置；图片二进制落在 IndexedDB，LocalStorage 里查不到图片二进制或 base64。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/u1-foundation.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      },
+      {
+        "desc": "静默失败终结 e2e：人为让存储写入失败（配额超限/隐私模式），错误能冒泡到上层并被界面感知，不出现「提示成功、刷新就没」的静默丢失。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/u1-storage-error.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "U1",
+        "pass": false,
+        "failed": [
+          {
+            "index": 1,
+            "desc": "双源目录与 v4 持久化 e2e：注入一件用户物件，刷新后它仍在（不被 reconcileItems 丢弃）；内置 14 件仍对齐清单；预置 v3 旧数据启动不崩、按作废重置；图片二进制落在 IndexedDB，LocalStorage 里查不到图片二进制或 base64。",
+            "reason": "命令退出码 1，期望 0；关键输出尾：Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.\n\n"
+          }
+        ],
+        "checked": [
+          {
+            "index": 0,
+            "desc": "生产构建通过：Vite 生产构建成功、无类型错误。",
+            "ok": true
+          },
+          {
+            "index": 1,
+            "desc": "双源目录与 v4 持久化 e2e：注入一件用户物件，刷新后它仍在（不被 reconcileItems 丢弃）；内置 14 件仍对齐清单；预置 v3 旧数据启动不崩、按作废重置；图片二进制落在 IndexedDB，LocalStorage 里查不到图片二进制或 base64。",
+            "ok": false,
+            "reason": "命令退出码 1，期望 0；关键输出尾：Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.\n\n"
+          },
+          {
+            "index": 2,
+            "desc": "静默失败终结 e2e：人为让存储写入失败（配额超限/隐私模式），错误能冒泡到上层并被界面感知，不出现「提示成功、刷新就没」的静默丢失。",
+            "ok": true
+          }
+        ],
+        "claimed_at_tick": 31,
+        "at": "2026-07-17T12:09:21.176Z"
+      },
+      {
+        "milestone": "U1",
+        "pass": true,
+        "failed": [],
+        "checked": [
+          {
+            "index": 0,
+            "desc": "生产构建通过：Vite 生产构建成功、无类型错误。",
+            "ok": true
+          },
+          {
+            "index": 1,
+            "desc": "双源目录与 v4 持久化 e2e：注入一件用户物件，刷新后它仍在（不被 reconcileItems 丢弃）；内置 14 件仍对齐清单；预置 v3 旧数据启动不崩、按作废重置；图片二进制落在 IndexedDB，LocalStorage 里查不到图片二进制或 base64。",
+            "ok": true
+          },
+          {
+            "index": 2,
+            "desc": "静默失败终结 e2e：人为让存储写入失败（配额超限/隐私模式），错误能冒泡到上层并被界面感知，不出现「提示成功、刷新就没」的静默丢失。",
+            "ok": true
+          }
+        ],
+        "claimed_at_tick": 34,
+        "at": "2026-07-17T12:44:22.337Z"
+      }
+    ],
+    "fail_count": 0
+  },
+  {
+    "id": "U2",
+    "artifact_required": true,
+    "goal": "上传管线与处理接口（本轮的正事）：dock 出现上传入口（游客模式没有）；选图后经解码与规范化——EXIF 方向校正、长边降采样至 ≤1600px、重编码压缩——过【处理接口】（本期实现为恒等直通，原图即成品），测得真实宽高比，弹预览供确认，确认后入库成一件 Item 并出现在 dock；一张 4000×3000 以上、带 EXIF 旋转标记的手机原图能走完全程：页面不崩、标签页不被杀、落库图长边 ≤1600px、显示方向正确；【处理接口】是将来接抠图/风格化的唯一插入点——替换该层实现即可改变产出，解码降采样、宽高比测量、入库、存储、UI 一行不用改。",
+    "criteria": [
+      {
+        "desc": "上传闭环 e2e：dock 选图 → 看到预览 → 确认入库 → 物件出现在 dock → 拖进场景 → 写故事 → 刷新后物件/摆放/故事全在；预览里取消则不入库、dock 无残留。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/u2-upload.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      },
+      {
+        "desc": "大图与 EXIF e2e：传一张 4000×3000 以上、EXIF orientation=6 的竖拍原图，页面不崩溃、标签页不被杀，落库图长边 ≤1600px 且显示方向正确（不躺倒）。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/u2-large-image.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      },
+      {
+        "desc": "处理接口是唯一插入点 e2e（本轮关键架构保证）：把一个反例实现（灰度处理器）注入该接口，不改上下游任何一行代码，上传产出的物件即变为灰度；若必须改动管线上下游/存储/UI 才能生效，即判失败。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/u2-seam.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "U2",
+        "pass": true,
+        "failed": [],
+        "checked": [
+          {
+            "index": 0,
+            "desc": "上传闭环 e2e：dock 选图 → 看到预览 → 确认入库 → 物件出现在 dock → 拖进场景 → 写故事 → 刷新后物件/摆放/故事全在；预览里取消则不入库、dock 无残留。",
+            "ok": true
+          },
+          {
+            "index": 1,
+            "desc": "大图与 EXIF e2e：传一张 4000×3000 以上、EXIF orientation=6 的竖拍原图，页面不崩溃、标签页不被杀，落库图长边 ≤1600px 且显示方向正确（不躺倒）。",
+            "ok": true
+          },
+          {
+            "index": 2,
+            "desc": "处理接口是唯一插入点 e2e（本轮关键架构保证）：把一个反例实现（灰度处理器）注入该接口，不改上下游任何一行代码，上传产出的物件即变为灰度；若必须改动管线上下游/存储/UI 才能生效，即判失败。",
+            "ok": true
+          }
+        ],
+        "claimed_at_tick": 37,
+        "at": "2026-07-17T16:16:37.852Z"
+      }
+    ]
+  },
+  {
+    "id": "U3",
+    "artifact_required": true,
+    "goal": "用户物件平权、配额与管理：上传来的物件与内置 14 件平权——能拖入场景、挪位、缩放、旋转、写故事、重命名、跨场景摆放且故事同步；此外可删除（内置 14 件不可删），删除后它在所有场景的摆放一并消失、IndexedDB 里的图片被清除、刷新不复活；上传上限 50 件，dock 显示「已传 N/50」，传满后在入口处前置阻止并说明（而非让用户走完选图流程才报错）；游客模式无上传/删除/重命名入口，点物件只弹故事与原图（只读）。",
+    "criteria": [
+      {
+        "desc": "平权与管理 e2e：对一件上传物件施加内置物件的全部操作（拖入/挪位/缩放/旋转/写故事/重命名/跨场景故事同步）均可用且行为一致；删除该物件后两个场景的摆放一并消失、IndexedDB 中对应图片记录被清除、刷新不复活；内置物件无删除入口。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/u3-parity.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      },
+      {
+        "desc": "配额 e2e：dock 显示「已传 N/50」并随上传更新；传到 50 件后上传入口被前置阻止并给出说明，无法传入第 51 件。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/u3-quota.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      },
+      {
+        "desc": "游客模式只读 e2e：切到游客模式后找不到任何上传/删除/重命名入口，点物件只弹故事与原图，无法改动任何数据。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/u3-guest.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "U3",
+        "pass": false,
+        "failed": [
+          {
+            "index": 0,
+            "desc": "平权与管理 e2e：对一件上传物件施加内置物件的全部操作（拖入/挪位/缩放/旋转/写故事/重命名/跨场景故事同步）均可用且行为一致；删除该物件后两个场景的摆放一并消失、IndexedDB 中对应图片记录被清除、刷新不复活；内置物件无删除入口。",
+            "reason": "命令退出码 1，期望 0；关键输出尾：Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.\n\n"
+          }
+        ],
+        "checked": [
+          {
+            "index": 0,
+            "desc": "平权与管理 e2e：对一件上传物件施加内置物件的全部操作（拖入/挪位/缩放/旋转/写故事/重命名/跨场景故事同步）均可用且行为一致；删除该物件后两个场景的摆放一并消失、IndexedDB 中对应图片记录被清除、刷新不复活；内置物件无删除入口。",
+            "ok": false,
+            "reason": "命令退出码 1，期望 0；关键输出尾：Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.\n\n"
+          },
+          {
+            "index": 1,
+            "desc": "配额 e2e：dock 显示「已传 N/50」并随上传更新；传到 50 件后上传入口被前置阻止并给出说明，无法传入第 51 件。",
+            "ok": true
+          },
+          {
+            "index": 2,
+            "desc": "游客模式只读 e2e：切到游客模式后找不到任何上传/删除/重命名入口，点物件只弹故事与原图，无法改动任何数据。",
+            "ok": true
+          }
+        ],
+        "claimed_at_tick": 40,
+        "at": "2026-07-17T18:33:59.132Z"
+      },
+      {
+        "milestone": "U3",
+        "pass": true,
+        "failed": [],
+        "checked": [
+          {
+            "index": 0,
+            "desc": "平权与管理 e2e：对一件上传物件施加内置物件的全部操作（拖入/挪位/缩放/旋转/写故事/重命名/跨场景故事同步）均可用且行为一致；删除该物件后两个场景的摆放一并消失、IndexedDB 中对应图片记录被清除、刷新不复活；内置物件无删除入口。",
+            "ok": true
+          },
+          {
+            "index": 1,
+            "desc": "配额 e2e：dock 显示「已传 N/50」并随上传更新；传到 50 件后上传入口被前置阻止并给出说明，无法传入第 51 件。",
+            "ok": true
+          },
+          {
+            "index": 2,
+            "desc": "游客模式只读 e2e：切到游客模式后找不到任何上传/删除/重命名入口，点物件只弹故事与原图，无法改动任何数据。",
+            "ok": true
+          }
+        ],
+        "claimed_at_tick": 43,
+        "at": "2026-07-17T20:21:17.172Z"
+      }
+    ],
+    "fail_count": 0
+  },
+  {
+    "id": "U4",
+    "artifact_required": true,
+    "goal": "收口·全流程 ＋ 双端达标：覆盖 17 条成功条件的端到端全流程（传照片 → 建场景 → 摆物件 → 写故事 → 切游客看故事）在 PC 与横屏手机都跑通、布局不错乱；前两版的 8 条里程碑 e2e 全部不回归；无 console 未捕获错误、无横向溢出；整体仍还原「旧信 · 沉浸」DNA。",
+    "criteria": [
+      {
+        "desc": "全流程双端 e2e：传照片 → 建场景 → 摆物件 → 写故事 → 切游客看故事，在 PC 与横屏手机视口下均跑通、布局不错乱；过程中无 console 未捕获错误、无横向滚动条。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/u4-full.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 240000
+        }
+      },
+      {
+        "desc": "旧里程碑不回归：M1~M4、N1~N4 的既有 e2e 全套跑通（全量 playwright 套件绿）。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 600000
+        }
+      },
+      {
+        "desc": "整体仍还原「旧信 · 沉浸」DNA：新增的上传入口、预览弹窗、「已传 N/50」、配额与报错提示均落在既有规范内（毛玻璃浮层、奶油半透明弹窗、UI 字号不低于 token 下限、不对称控件做视觉居中补偿）。【判定护栏】用户上传的照片本期按老板定调以「裸矩形原图」入场——不抠图、不装裱、不风格化，其背景保留与「贴纸感」是老板在调向中明确权衡后接受的取舍，不得据此判失败；本条只判新增界面元素是否守住既有 DNA 规范。",
+        "manual": true
+      }
+    ],
+    "status": "done",
+    "verdicts": [
+      {
+        "milestone": "U4",
+        "pass": true,
+        "failed": []
+      }
+    ]
+  },
+  {
+    "id": "E1",
+    "artifact_required": true,
+    "goal": "首拖卡死与游客模式堵漏（老板亲眼见到的两个真 bug）：拖拽幽灵改走 createPortal 逃出到 body（照 UploadEntry.tsx:9-10 已验证的做法——同一个「dock 带 transform+overflow:hidden 会为其内的 fixed 浮层建立包含块并裁掉」的坑，上传预览逃了、拖拽幽灵漏了），拖动全程幽灵可见并跟着指针在视口里走；补 window 级 pointerup/pointercancel 兜底，窗口外松手、切标签页、setPointerCapture 失败等任何异常路径都能把 .is-dragging 复位，不必刷新；落点换算不再依赖背景图恰好 onLoad——未加载完时用图片固有宽高比而非退化成 stage 比例，消除「只卡第一次」；游客模式下模式开关整组不渲染、仅保留 URL 参数这一不显眼的退出路径，访客无路可回编辑；顺带修 hydrate 期间未回填图的用户物件仍可拖（会摆出一个看不见的物件）与 App.tsx:47 创建的 objectURL 从不 revoke 的内存泄漏。工程可生产构建。",
+    "criteria": [
+      {
+        "desc": "【人工·老板亲验】首次拖拽即可用：清缓存后打开页面，趁背景图还没加载完立刻从 dock 拖一件物件进场景——拖动中幽灵全程可见并跟着指针走，松手后物件就落在松手处（不跑偏、不消失、不落进模糊补边区），界面不卡死；随后再拖两次，表现与第一次一致；拖到浏览器窗口外松手回来后界面仍可正常操作、无需刷新。【口径说明】老板在调向中明确定调「不接：修完我自己试」——助手曾以「此 bug 躲过 20 个 spec 正是因现有口径先天照不到（拖拽用例主动等背景图加载完才拖、幽灵只断言 toBeVisible 而 Playwright 可见性穿不透 overflow 裁剪）」顶过一次，老板维持原判。故本条记人工，不得擅自改回自动断言。",
+        "manual": true
+      },
+      {
+        "desc": "【人工·老板亲验】游客模式关得住：切到游客模式后，界面上找不到也点不到任何切回编辑模式的入口（模式开关整组不渲染），上传/删除/重命名入口一并不见，点物件只弹故事与原图。同上，本条按老板定调记人工验收。",
+        "manual": true
+      },
+      {
+        "desc": "拖拽与回填的自动兜底：hydrate 尚未把图回填到用户物件时，该物件的 dock 卡片不可拖、不可摆（不会摆出一个看不见的物件）；物件被删除或图被替换后，其 objectURL 被 revoke（不再泄漏）。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/e1-hydrate.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 240000
+        }
+      },
+      {
+        "desc": "生产构建通过：Vite 生产构建成功、无类型错误。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      }
+    ],
+    "status": "done"
+  },
+  {
+    "id": "E2",
+    "artifact_required": true,
+    "goal": "后悔药：单步撤销与数据安全。引入单步撤销——保留上一份状态快照，任何改动数据的操作（删摆放、删物件、删场景、挪位/缩放/旋转、改名、上传入库）之后都能回退到上一步，删除类操作主动弹出「已删除 · 撤销」提示条，Ctrl/Cmd+Z 同样有效（老板明确选单步而非完整 undo/redo 栈：接得住绝大多数「手滑了」，又不必改造整个状态层）。同时补齐三道防线：画布上删除物件补二次确认（与 dock 删物件、删场景一致——现状是垃圾桶紧挨着写故事的铅笔、单击即执行）；删场景的确认文案明说会连带清空这间房里的多少件摆放（现状 gallery.ts:127 静默清空、文案只字未提）；物件拖动钳制在可视区内并留边距，不再「允许出界、不钳制」（Canvas.tsx:386）导致手一滑永久找不回。另修：故事草稿有内容时点弹窗外部要挽留、不再无声蒸发；InlineEdit.tsx:64 补 isComposing 判断，中文拼音回车选字不再被当成提交。持久化行为不受影响。",
+    "criteria": [
+      {
+        "desc": "单步撤销全覆盖：删摆放、删物件、删场景、挪位/缩放/旋转、改名、上传入库各做一次后，撤销都能回到操作前的状态（含刷新后一致）；删除类操作出现「已删除 · 撤销」入口；Ctrl/Cmd+Z 与界面入口等效。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/e2-undo.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 240000
+        }
+      },
+      {
+        "desc": "误操作防线：画布删除物件有二次确认；删场景的确认文案含该场景内的摆放件数；把物件拖向视口外后它仍留在可视区内、可被选中（不会消失）；故事弹窗里有未保存草稿时点外部会挽留而非静默丢弃；用输入法 composition 状态按回车不会提交改名。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/e2-safety.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 240000
+        }
+      },
+      {
+        "desc": "生产构建通过：Vite 生产构建成功、无类型错误。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      }
+    ],
+    "status": "in_progress"
+  },
+  {
+    "id": "E3",
+    "artifact_required": true,
+    "goal": "编辑手感补课（老板定「前两梯队全修」中的烦人七条）：物件前后层次可调（工具条加置顶/置底或上移/下移），并修掉 gallery.ts:163 「z = 当前摆放数 + 1」导致删掉中间一件再摆新件时 z 撞号、刷新前后叠压顺序不定的问题；旋转可归正（双击旋转钮回 0°、拖动时 0°/90° 轻吸附），不再「歪了 3° 只能删掉重摆」；移动端 dock 列表可滚（区分「拖物件」与「滚列表」两种手势，现状 .thumb 的 touch-action:none 让列表根本滚不动、滚动条还被隐藏）；上传入库后自动滚到新物件并高亮，不再让人以为传失败而重传；上传预览的 scrim 不再 onPointerDown 即取消，手指点偏一下不会把解码好的成果丢弃；空名与超长名给出明确反馈而非无声弹回或悄悄截断；大文件上传有处理中进度、HEIC 等解不了的格式要说清是格式问题而非笼统「换一张试试」；还没建场景时点 dock 里的物件给一句引导而非石沉大海。",
+    "criteria": [
+      {
+        "desc": "手感三项：能把被遮挡的物件调到前面来，且删掉中间一件再摆新件后刷新前后叠压顺序一致；旋转后能一步归正到 0°；横屏手机视口下 dock 的物件列表可滚动、超出面板高度的物件够得着。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/e3-handling.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 240000
+        }
+      },
+      {
+        "desc": "反馈六项：上传确认后新物件在 dock 中可见并高亮；未建场景时点 dock 物件给出引导文案；提交空名与超长名各有明确提示；点预览弹窗外缘不会直接丢弃成果；无法解码的格式提示中含格式相关说明；大文件上传期间有处理中状态。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/e3-feedback.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 240000
+        }
+      },
+      {
+        "desc": "生产构建通过：Vite 生产构建成功、无类型错误。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      }
+    ]
+  },
+  {
+    "id": "E4",
+    "artifact_required": true,
+    "goal": "背景上传、背景库与场景上限 10（本轮唯一的新功能，复用 U 版现成地基）：背景走与物件不同的一条轻路径——老板定「真·原图不动」，原始文件直接进 IndexedDB，不重编码、不降采样，宽高比用 <img> 的 naturalWidth 量、显示也走 <img>（浏览器惰性解码，EXIF 方向现代浏览器自动认），因此不吃物件管线「解码到画布再重编码」的那约 190MB 内存；代价是存储占用大，由 U 版已落地的「存储失败必被告知」兜底。上传的背景进入独立背景库，一张背景可反复用于建多个场景、删场景不连带删背景；背景库可删背景，但正在被场景使用的背景不可删（须先删该场景）并给出说明。场景上限由 3 放宽到 10，「背景不可重复」一条作废（它原本只是「3 张内置背景各配一个场景」的倒推）；建满后的「素材已用完」提示由 11px、pointer-events:none 的小黑标签改为看得见的说明。",
+    "criteria": [
+      {
+        "desc": "背景可自传：上传一张照片作为背景并用它建出新场景，刷新后背景与场景都在；带 EXIF 旋转标记的手机竖拍图显示方向正确、不躺倒；落库的背景字节与源文件一致（证明未重编码、未降采样）；上传背景过程中页面不崩溃、标签页不被杀。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/e4-background.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 240000
+        }
+      },
+      {
+        "desc": "背景库与场景上限：同一张自传背景能建出两个场景；删掉其中一个场景后该背景仍在库里；正在被场景使用的背景删不掉并给出说明；建到第 11 个场景被阻止，且阻止说明在界面上真实可见（不是被 pointer-events 挡掉的隐形标签）；两个场景用同一张背景不再被判为非法。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/e4-library.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 240000
+        }
+      },
+      {
+        "desc": "生产构建通过：Vite 生产构建成功、无类型错误。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 180000
+        }
+      }
+    ]
+  },
+  {
+    "id": "E5",
+    "artifact_required": true,
+    "goal": "收口·全流程 ＋ 双端达标：覆盖 27 条成功条件的端到端全流程（传背景建场景 → 传照片 → 摆物件 → 写故事 → 撤销一次 → 切游客看故事）在 PC 与横屏手机都跑通、布局不错乱；前三代 M1~M4 / N1~N4 / U1~U4 共 12 条里程碑的 e2e 全部不回归；无 console 未捕获错误、无横向溢出；整体仍还原「旧信 · 沉浸」DNA。",
+    "criteria": [
+      {
+        "desc": "全流程双端 e2e：传背景建场景 → 传照片 → 摆物件 → 写故事 → 撤销一次 → 切游客看故事，在 PC 与横屏手机视口下均跑通、布局不错乱；过程中无 console 未捕获错误、无横向滚动条。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "e2e/e5-full.spec.ts",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 240000
+        }
+      },
+      {
+        "desc": "旧里程碑不回归：M1~M4、N1~N4、U1~U4 的既有 e2e 全套跑通（全量 playwright 套件绿）。",
+        "check": {
+          "type": "command",
+          "cmd": [
+            "npx",
+            "playwright",
+            "test",
+            "--reporter=line"
+          ],
+          "expect_exit": 0,
+          "timeout_ms": 900000
+        }
+      },
+      {
+        "desc": "【人工·老板亲验】整体仍还原「旧信 · 沉浸」DNA：本轮新增的撤销提示条、层次/归正工具、背景上传入口与背景库、各类反馈文案，均落在既有规范内（毛玻璃浮层、奶油半透明弹窗、陶土红唯一强调、UI 字号不低于 token 下限、不对称控件做视觉居中补偿）。同时由老板亲自复核他报的三个问题确已消失：首次拖拽顺畅、场景能新增、游客模式下无编辑入口。【判定护栏】用户上传的照片仍按「裸矩形原图」入场（不抠图、不装裱、不风格化），用户上传的背景按原图不压缩入场——均为老板明确权衡后接受的取舍，不得据此判失败。",
+        "manual": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "narrative": "sprint N2-S2（浮层玻璃四件套/dock收合居中/拖动让路铁律/字号下限/e2e n2-shell.spec.ts收口）执行完毕：建造员改了 src/styles/tokens.css、src/components/Header.tsx、src/components/SceneBar.tsx、src/components/ItemTray.tsx、src/components/Workbench.tsx、src/components/Canvas.tsx、src/App.css，新建 e2e/n2-shell.spec.ts（12 用例），在 N2-S1 地基上叠出品牌章/模式开关+隐藏界面钮/场景条/物件dock 玻璃四件套，dock可收合成贴边把手并做视觉居中补偿，拖动物件时浮层整体淡出让路、物件可落点在浮层常驻区（如视口顶部），UI标签字号全部提到--text-label-min（11px）；改动细节见 receipts/N2-S2/receipt-builder.md。评审员亲手核查（build、playwright n2-shell两次防flake各12/12、全量回归对照排除新增破坏、浏览器实测computed style比对tokens.css v2、手动截图核对让路/隐藏界面/dock居中/字号）9条验收硬指标逐条有证据、判定pass，证据写入 receipts/N2-S2/review-evidence.md。sprint N2-S2 已 advance 到 done；N2 里程碑两个sprint全部交付完毕，已提交 milestone-claim 申报完成；主产出画廊登记原地更新（artifact a-e1fc3397，site型，npm run dev:5173）。",
+  "next_plan": "下一轮预检会转入 N2 验收：milestones.json N2 有两条 criteria，一条是机器可判的 e2e/n2-shell.spec.ts（已过），另一条「沉浸观感验收：玻璃材质/让路动效/暗角与模糊补边对齐 A2-旧信-沉浸.html 与 design.md v2；dock收合把手不挤偏内容」是人判条目，acceptance-run 大概率会给 needs_inspector，需要拉起检察员会话定案。",
+  "decisions": [],
+  "outputs": [
+    "src/styles/tokens.css",
+    "src/components/Header.tsx",
+    "src/components/SceneBar.tsx",
+    "src/components/ItemTray.tsx",
+    "src/components/Workbench.tsx",
+    "src/components/Canvas.tsx",
+    "src/App.css",
+    "e2e/n2-shell.spec.ts",
+    "receipts/N2-S2/receipt-builder.md",
+    "receipts/N2-S2/review-evidence.md"
+  ]
+}

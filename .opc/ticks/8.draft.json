@@ -1,0 +1,12 @@
+{
+  "narrative": "M3-S2（故事弹窗视觉与编辑/游客双模式）本轮定稿。建造员（session a1ac25e2851904207）新建 StoryModal.tsx 承接双模式弹窗（编辑模式可写故事、游客模式只读+原图不可编辑/拖动/无选中手柄），删除旧的 StoryEditor.tsx，改 Canvas.tsx 接入游客模式点击与开关逻辑，App.css 落地半透明奶油底+backdrop-blur+陶土红描边的旧信弹窗视觉，补齐 e2e/m3-story.spec.ts 四步全链路（写故事→刷新还原→跨场景同步→游客只读），playwright 三条与全量八条均绿。评审员（session a50c68fa678afe5ce）逐条核对 sprint goal 的验收硬指标，亲自复跑 e2e 与全量回归、逐段核对链路源码、逐条核对弹窗视觉数值对齐 taste/design.md 与 tokens.css、代码级核查游客只读守卫无绕过口子，判 pass 放行，证据存 receipts/M3-S2/review-evidence.md。sprint M3-S2 推进至 done，M3 里程碑两个 sprint（M3-S1 数据层、M3-S2 交互层）交付物齐，已经 write milestone-claim 申报完成；产出登记画廊 a-20360bf8（念念·陈列室 M3：物件故事与编辑/游客双模式，site 型）。",
+  "next_plan": "M3 milestone-claim 已提交，下一轮预检应指派 acceptance 验收 M3：机器可判的 e2e 硬指标（npx playwright test e2e/m3-story.spec.ts）会自动跑，另有一条故事弹窗视觉的 manual 标准需要独立检察员定案（needs_inspector），照 opc-tick 剧本第三节 acceptance 段拉检察会话核验。",
+  "decisions": [],
+  "outputs": [
+    "src/components/StoryModal.tsx（新建，双模式故事弹窗）",
+    "src/components/StoryEditor.tsx（删除，被 StoryModal 取代）",
+    "src/components/Canvas.tsx、src/App.css（接入游客模式与弹窗视觉）",
+    "e2e/m3-story.spec.ts（补齐四步全链路）",
+    "receipts/M3-S2/receipt-builder.md、receipts/M3-S2/review-evidence.md"
+  ]
+}

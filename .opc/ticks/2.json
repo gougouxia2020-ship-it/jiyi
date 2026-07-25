@@ -1,0 +1,26 @@
+{
+  "seq": 2,
+  "status": "finished",
+  "result": "done-work",
+  "action": null,
+  "started_at": "2026-07-15T16:41:49.171Z",
+  "ended_at": "2026-07-15T17:01:40.145Z",
+  "duration_seconds": 1191,
+  "decisions": [],
+  "outputs": [
+    "src/App.tsx",
+    "src/App.css",
+    "src/state/gallery.ts",
+    "src/components/Header.tsx",
+    "src/components/SceneBar.tsx",
+    "src/components/ItemTray.tsx",
+    "src/components/Canvas.tsx",
+    "src/components/Workbench.tsx",
+    "e2e/m1-shell.spec.ts",
+    "playwright.config.ts",
+    "receipts/M1-S2/receipt-builder.md",
+    "receipts/M1-S2/review-evidence.md"
+  ],
+  "artifacts": [],
+  "generation": 2
+}

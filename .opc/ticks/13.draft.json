@@ -1,0 +1,15 @@
+{
+  "narrative": "里程碑 N1（素材与数据地基）拆分排期并并轨执行首个 sprint：主控读全 idea.json/success.json/taste.json 与 milestones.json N1 原文后，一次批量落档拆出 N1-S1（14 张物件 PNG 裁边＋清单宽高比＋校验脚本）与 N1-S2（横版书房场景图＋schema v2 百分比坐标＋生产构建＋e2e），两个 sprint 的 goal 都带【验收硬指标】段落抄自里程碑原文。随即执行 N1-S1：建造员（opus）写出 scripts/check-asset-trim.mjs、scripts/trim-assets.mjs、scripts/lib/png.mjs、scripts/lib/trim.mjs，按 alpha≥240 识别实体包围盒（忽略烘焙软阴影）把 items/ 下 14 张物件 PNG 原地裁边到四边透明留白 ≤6px（含此前撑歪的复古闹钟已裁回竖向），src/assets/manifest.ts 的物件条目补齐真实宽高比；自检 check-asset-trim.mjs 与 npm run build 均 exit 0，回执见 receipts/N1-S1/receipt-builder.md。评审员（sonnet）亲手核查：亲跑两条命令复现 exit 0，另写独立 PIL 脚本重算 14 张图的 alpha 包围盒/留白/宽高比与 manifest.ts 逐条比对吻合，目视抽查 8 张裁边贴合实体，并确认 check-asset-trim.mjs 未越界检查属于 N1-S2 的横版书房图、backgrounds/ 未被触碰，裁决 pass、零打回，证据见 receipts/N1-S1/review-evidence.md。sprint N1-S1 定稿（planned→running→done）。N1-S2 留给下一轮执行，里程碑 N1 尚未申报完成。",
+  "next_plan": "下一轮预检会给 action=execute、milestone=N1、sprint=N1-S2：新增横版书房场景图（暖调胶片质感、与客厅/卧室成一组）接入 manifest.ts 替换现有竖版书房，持久化 schema 升级到 v2（Placement.x/y 改为场景图坐标系百分比、SCHEMA_VERSION=2、v1 旧数据启动不崩清空重摆），新增 e2e/n1-foundation.spec.ts，把 check-asset-trim.mjs 补上横版书房图存在性/横向朝向校验，npm run build 须过。S2 定稿后 N1 交付物全齐，可申报 milestone-claim 转入验收（其中一条人工判——横版书房图是否对味「旧信」DNA，验收时若命中人工判条目需拉独立检察员对照 taste.json 与既有场景图定案）。",
+  "decisions": [],
+  "outputs": [
+    "scripts/check-asset-trim.mjs",
+    "scripts/trim-assets.mjs",
+    "scripts/lib/png.mjs",
+    "scripts/lib/trim.mjs",
+    "src/assets/manifest.ts",
+    "items/（14 张物件 PNG 原地裁剪）",
+    "receipts/N1-S1/receipt-builder.md",
+    "receipts/N1-S1/review-evidence.md"
+  ]
+}

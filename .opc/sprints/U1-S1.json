@@ -1,0 +1,15 @@
+{
+  "milestone": "U1",
+  "goal": "把 Item 数据结构从单一内置清单扩为双源（内置 builtin ＋ 用户 user）：src/model/types.ts 的 Item 新增来源标记 source（值 'builtin'|'user'）、运行时宽高比 aspectRatio、以及「原图」originalImageSrc / 「展示图」displayImageSrc 两个位（本期两者指向同一张图）；修掉 src/storage/persistence.ts 的 reconcileItems——它现在只 initial.map(...) 遍历内置 14 件当基准，任何不在这份清单上的用户物件读回时被直接丢弃；改为内置项对齐 manifest 清单、用户项原样保留（不丢弃）。图片二进制实际存储位置（IndexedDB）留给 U1-S2，本 sprint 只动数据结构与 reconcile 逻辑，imageSrc 仍可指向现有存法过渡。【验收硬指标】milestones.json U1 goal 原文：物件目录从编译期焊死的 14 件改为双源（内置清单＋用户物件），Item 带来源标记（builtin/user）、运行时宽高比、以及「原图/展示图」两个位（本期指向同一张）；修掉 persistence.ts 的 reconcileItems——它现在拿内置清单当基准 map，读回时会把不在清单上的用户物件直接丢弃。idea.json 原文：改为内置项对齐清单，用户项原样保留。验收：在 loadState 注入一个不在 ITEMS 清单里的 user Item，reconcile 后该 Item 必须仍存在于返回的 items 数组里；内置 14 件仍与 manifest.ts 的 ITEMS 对齐；npm run build 须 exit 0、无类型错误。",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "U1-S1",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲读 src/model/types.ts 与 src/storage/persistence.ts 改动源码；亲跑 npm run build 与 npx playwright test e2e/u1-s1-dualsource.spec.ts --reporter=line；亲跑全量 e2e 回归并与 N4-S1 基线交叉核验失败集合；核查 reconcileItems 新逻辑是否仍会丢弃不在内置清单上的 user Item",
+      "evidence": "reconcileItems 已改为内置项对齐 manifest 清单、用户项原样保留，不再只 initial.map 遍历丢弃用户物件；Item 新增 source/aspectRatio/originalImageSrc/displayImageSrc 四字段；npm run build exit 0 无类型错误；e2e/u1-s1-dualsource.spec.ts 4/4 通过（含注入 user Item 刷新后仍在、内置14件仍对齐清单两条核心断言）；全量回归失败集合与开工前基线一致（9条为 N2 升 v3 前遗留旧断言），本 sprint 未新增失败；未越界触碰 IndexedDB/schema v4/saveState",
+      "at_tick": 30
+    }
+  ]
+}

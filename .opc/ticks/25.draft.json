@@ -1,0 +1,8 @@
+{
+  "narrative": "本轮预检给的行动计划是 N3 验收定案。N3 的机器可判条目（e2e/n3-edit.spec.ts）已过，唯一悬的人工条目「手感验收」拉了独立检察员会话（agentId ad0917e718f5046e9，强模型）定案：检察员用真实 pointerdown/move/up 序列逐帧核对拖动/缩放/旋转的跟手性，PC 视口下三种手势的变换量与指针位移误差均为 0；触摸输入同样零误差且端到端持久化刷新还原正常；实测 --h2-hit 命中区（缩放圆点靠 ::after 撑到 26px、旋转钮 28.2px、工具条按钮 32px）全部达标；确认工具条/手柄区图标（RotateIcon/StoryIcon/TrashIcon）均为内联 SVG、非字符残留。终裁 pass=true，N3 已由 verifying 推进到 done。检察员同时如实报了两条越界观察，不影响本条结论：一是本沙盒环境禁用了窗口缩放，无法开真实 844×390 横屏手机窗口，改用触摸指针输入等效验证替代；二是发现 StoryModal.tsx 的故事弹窗关闭钮与 SceneBar.tsx 的场景 chip 删除入口仍用字符 ✕/× 而非 SVG，但这两处在工具条/手柄区域之外，不属本条验收标准范围。",
+  "next_plan": "N3 已收官，下一轮预检大概率会指向 N4（当前仍是排期中、无 sprint）的拆分排期；若拆分轮读到 N4 目标里含双模式/双端收口与整体视觉终验，记得把检察员本轮点名的两处字符图标残留（StoryModal.tsx ✕、SceneBar.tsx ×）作为验收细节一并纳入考量。",
+  "decisions": [
+    "N3 验收通过（检察员终裁 pass=true），里程碑状态 verifying → done"
+  ],
+  "outputs": []
+}

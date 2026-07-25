@@ -1,0 +1,15 @@
+{
+  "seq": 50,
+  "status": "finished",
+  "result": "awaiting-approval",
+  "action": null,
+  "started_at": "2026-07-18T20:12:01.340Z",
+  "ended_at": "2026-07-18T20:16:33.874Z",
+  "duration_seconds": 273,
+  "decisions": [
+    "这两条只能老板本人拍板的验收项,没找人代判,直接请老板亲自试用后再定"
+  ],
+  "outputs": [],
+  "artifacts": [],
+  "generation": 52
+}

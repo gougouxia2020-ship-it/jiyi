@@ -1,0 +1,5 @@
+{
+  "milestone": "U1",
+  "cause": "U1 验收第 2 条硬指标（双源目录与 v4 持久化 e2e）判定失败：验收标准点名的测试文件 e2e/u1-foundation.spec.ts 在仓库里从未被创建，Playwright 报 Error: No tests found、退出码 1。U1-S1 建造员另写了 e2e/u1-s1-dualsource.spec.ts，只覆盖了标准四点里的前两点（注入用户物件刷新后仍在、内置14件仍对齐清单）；U1-S2 建造员把第四点（图片二进制落IndexedDB、LocalStorage查不到base64）落进了 e2e/u1-storage-error.spec.ts 的第②个 test，但第三点（预置 v3 旧数据启动不崩、按作废重置）只在评审时用临时脚本手工核验、从未落成任何提交进仓库的 e2e 断言。两个 sprint 的 reviewer 都只核对了各自 sprint【验收硬指标】圈定的子集，没人核对里程碑级验收标准原文点名的文件名 u1-foundation.spec.ts 是否真实存在，导致文件缺口一直未被发现，直到机器验收才暴露。",
+  "fix": "重拆一个收口 sprint（U1-S3），只治文件缺口、不碰功能：U1-S1/U1-S2 的底层实现（reconcileItems 双源保留、IndexedDB 图片存取、schema v4 迁移、saveState 报错冒泡）均已过评审，不重做。新建 e2e/u1-foundation.spec.ts，把里程碑验收标准原文四点逐条落成断言：①注入一件不在内置清单里的用户物件、刷新后仍在；②内置14件仍对齐清单；③预置一份 v3 旧数据启动应用不崩、按既有作废重置路径处理；④图片二进制落 IndexedDB、LocalStorage 序列化内容里查不到该图片的二进制或 base64。①②可直接复用 e2e/u1-s1-dualsource.spec.ts 的断言逻辑，④可直接复用 e2e/u1-storage-error.spec.ts 第②个 test 的断言逻辑，③需新写；四点验证完毕后跑通 npx playwright test e2e/u1-foundation.spec.ts --reporter=line 须 exit 0，再重新申报 U1 完成、走下一轮机器验收。"
+}

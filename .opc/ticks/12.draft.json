@@ -1,0 +1,8 @@
+{
+  "narrative": "预检判定本轮为验收轮：里程碑 M4（收口·全流程 + 双端达标）已在第 11 轮申报完成，本轮跑 acceptance-run 定过不过。机器可判条目（e2e/m4-full.spec.ts，覆盖 PC/768px/375px 三视口全流程）已通过；唯一人判条目「双端布局与整体视觉验收：横屏手机布局不错乱、元素不溢出遮挡、整体还原旧信 DNA」触发 needs_inspector，拉起独立检察员（opus）子会话定案——只给验收标准原文与交付物（运行中的念念·陈列室应用 npm run dev:5173、taste/examples/A-旧信.html、src/styles/tokens.css），不看团队自述。检察员用同源 iframe 模拟 812x375 横屏手机视口逐项核验：页面无横向溢出（scrollWidth==clientWidth）、物件抽屉的横向滚动限制在 aside.tray 容器内而非页面级溢出、7 个手柄（缩放/旋转/故事/删除）命中区与描边填色均取自 tokens.css 变量、故事弹窗半透明+backdrop-blur 贴底不裁切；桌面 1280px 与竖屏 375px 参照一致；tokens.css 与阶段一参考版本内容一致、样式表 228 处 var() 引用均对应正确取值。判定 VERDICT: PASS。已回填三连：advance verifying → write verdict(pass:true) → advance done，里程碑 M4 定稿。",
+  "next_plan": "M1–M4 全部里程碑已验收通过，覆盖阶段一 success.json 定义的全部 6 条成功条件（主流程闭环、双端顺滑变换、多场景背景约束、持久化、故事跨场景同步、双端可用）。下一轮预检若判定阶段二范围已收官，交由老板复核整体成果或走 steering 追加新范围；若预检另给出新 sprint/action，照常按行动计划继续执行。",
+  "decisions": [
+    "独立检察员对 M4 唯一人判条目（双端布局与整体视觉验收）定案 PASS，里程碑 M4 定稿为 done"
+  ],
+  "outputs": []
+}

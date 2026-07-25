@@ -1,0 +1,15 @@
+{
+  "milestone": "U4",
+  "goal": "目标白话：把 e2e/u4-full.spec.ts 扩展到横屏手机（844×390）视口跑通同一条「传照片→建场景→摆物件→写故事→切游客看故事」全链路，PC 与横屏手机双视口均验证无横向溢出、无 console 未捕获错误或未处理的 Promise 拒绝；修复发现的响应式缺陷；核验整体视觉仍还原「旧信·沉浸」DNA；收尾前再跑一遍全量 playwright 套件确认双视口改动未引入新回归。【验收硬指标】milestones.json U4.criteria manual 原文：「整体仍还原「旧信·沉浸」DNA：新增的上传入口、预览弹窗、「已传 N/50」、配额与报错提示均落在既有规范内（毛玻璃浮层、奶油半透明弹窗、UI 字号不低于 token 下限、不对称控件做视觉居中补偿）。【判定护栏】用户上传的照片本期按老板定调以「裸矩形原图」入场——不抠图、不装裱、不风格化，其背景保留与「贴纸感」是老板在调向中明确权衡后接受的取舍，不得据此判失败；本条只判新增界面元素是否守住既有 DNA 规范。」",
+  "status": "done",
+  "reviews": [
+    {
+      "sprint": "U4-S2",
+      "who": "reviewer",
+      "verdict": "pass",
+      "tried": "亲手连跑 npx playwright test e2e/u4-full.spec.ts --reporter=line 与 npx playwright test --reporter=line 各2次（非采信自报）；逐行通读 u4-full.spec.ts 全508行核对是否真为双视口(PC1920/横屏手机844×390)各自完整跑同一条传照片→建场景→摆物件→写故事→切游客链路、错误收集(pageerror/unhandledrejection/console)与无横向溢出断言是否真实机制而非摆设；用mtime交叉核验本sprint实际只改了e2e/u4-full.spec.ts与src/App.css两个文件、其余src/组件与tokens.css未动；逐条核对App.css新增的矮视口(max-height:560px)覆盖规则是否只改padding/margin/max-height数值、未换成裸颜色/字号、token引用未变；用预览弹窗max-height=100vh-2*space-md(390视口下=358px)与各元素尺寸做算术复核，交叉验证建造员声称的操作区被顶到滚动线以下缺陷与修复是否真实存在；核对CSS里用到的classname与spec里用到的testid是否对应UploadEntry.tsx真实渲染的元素而非虚构选择器；排查是否有test.skip/only等隐藏失败或凑数手法。",
+      "evidence": "两条验收命令各跑2次均exit 0（u4-full稳定2 passed/5.3s含PC1920与横屏手机844×390两条独立test、全量稳定57 passed/~52s，workers=1/retries=0，与U4-S1基线56+1一致），无flaky；e2e/u4-full.spec.ts的VIEWPORTS数组驱动同一runFullChain在两个视口各跑一遍全链路，全程真实click/fill/mouse拖拽（page.mouse.down/move/up），assertNoHorizontalOverflow用document.documentElement.scrollWidth/clientWidth真实测量共6处调用，assertNoRuntimeErrors对pageErrors/rejections/consoleErrors三数组toEqual([])非空转判定；mtime显示src/App.css与e2e/u4-full.spec.ts分别在06:26:47与06:32:02改动、其余src/文件（含tokens.css）mtime均≤01:44:48早于本sprint窗口近5小时，确认改动范围与建造员声称一致；App.css新增的.upload-preview系列矮视口覆盖规则（L1661-1693）逐条核对只涉及padding/margin/max-height8条数值改动，无一条碰color/font-size/border，基础规则的--color-popup/--text-label-min/--shadow-float等token引用未被替换成裸值；算术复核：修复前预览弹窗内容累计约399px超过390视口下358px上限（触发滚动隐藏操作区，与缺陷描述吻合），修复后累计约297px落在358px内（无需滚动，与修复描述吻合）；classname/testid逐一比对UploadEntry.tsx源码（L82-232）确认非虚构；grep未发现.skip/.fixme/.only使用。已知局限：assertNoHorizontalOverflow只测横向溢出，Playwright locator.click()自动滚动使该CSS修复本身没有专属自动化回归断言钉住，仅靠人工DNA核验与本证据源码级交叉验证覆盖，此局限已记录但不构成打回理由（不违反criteria字面要求）。详见receipts/U4-S2/review-evidence.md。",
+      "at_tick": 46
+    }
+  ]
+}
