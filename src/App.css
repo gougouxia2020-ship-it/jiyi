@@ -1,0 +1,1730 @@
+/* 念念 · 陈列室 —— 满屏沉浸外壳样式（方向 A2「旧信 · 沉浸」· N2-S1）
+ *
+ * 本轮（N2-S1）拆掉旧的定宽 1180px Workbench 外壳，改为满屏沉浸：整个浏览器视口 = 一间房。
+ *  - 场景自适应层：同图放大模糊补边（.scene-blur）→ 场景图 contain 居中完整显示（.scene-img）→
+ *    画布暗角（.stage::after，沿用 --canvas-inset 气质）→ 物件层（.stage__items）自底向上四层。
+ *  - 报头 / 场景条 / 物件抽屉改为浮在房间之上的浮层（本 sprint 先做最简过渡：绝对定位、暖奶油纸底，
+ *    尚不做毛玻璃四件套与拖动让路，那两样留给 N2-S2 收口）。
+ *
+ * DNA 血统不变（暖奶油 · 陶土红 · 高对比衬线）；配色/字体/间距/圆角/阴影/动效均取自 tokens.css 变量。
+ */
+
+/* —— 满屏底：外壳固定铺满视口，无定宽留白、无居中盒、页面不滚动 —— */
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--color-sand);
+}
+
+.app {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ============================================================
+   场景自适应层（N2-S1）：整个视口 = 一间房
+   ============================================================ */
+
+/* 画布 = 满屏 stage。任意比例场景图都在此内 contain 居中 + 同图模糊补边。 */
+.stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #1a140e; /* 深色兜底（模糊补边覆盖其上，正常不外露）*/
+}
+
+/* 补边层：同图放大模糊版铺满补满两侧（blur≈30px + 轻微降亮），任意比例都不露底色。
+ * inset:-4% + scale(1.06) 外扩，避免 blur 采样到边缘的透明像素。压在最底（z=0）。 */
+.scene-blur {
+  position: absolute;
+  inset: -4%;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(30px) saturate(1.06) brightness(0.9);
+  transform: scale(1.06);
+}
+
+/* 场景图本体：object-fit:contain 居中完整显示——竖图/横图/方图一律不裁图面。
+ * 元素铺满 stage、由 contain letterbox 出实际图面矩形（几何与 Canvas.tsx 的 containRect 一致，
+ * 物件坐标锚定的正是这块图面矩形）。压在补边层之上（z=1）。 */
+.scene-img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* 画布暗角：沿用 --canvas-inset 气质，压在场景层之上、物件层之下（z=2），不接指针。 */
+.stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  box-shadow: var(--canvas-inset);
+  pointer-events: none;
+}
+
+/* 物件层：绝对定位铺满 stage，压在暗角之上（z=3）。 */
+.stage__items {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+
+/* 空场景兜底：满屏奶油底 + 居中提示（无场景时 Canvas 渲染此态）。 */
+.stage--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-paper-2);
+}
+
+.stage__placeholder {
+  text-align: center;
+  color: var(--color-ink-soft);
+  padding: var(--space-lg);
+}
+
+.stage__placeholder-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-title);
+  color: var(--color-ink);
+  margin: 0 0 6px;
+}
+
+.stage__placeholder-sub {
+  margin: 0;
+  font-size: var(--text-meta);
+}
+
+.stage__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 76px;
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-meta);
+  color: var(--color-paper);
+  background: rgba(44, 38, 32, 0.55);
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 4;
+}
+
+/* ============================================================
+   摆放的物件（选中态手柄见下方「Canva 式手柄 v2」段）
+   ------------------------------------------------------------
+   三层结构（对齐 Canvas.tsx）：
+    .stage__item —— 位移层：只用 transform:translate 落位（不用 left/top，避免重排）+ z-index；
+                   工具条 .stage__toolbar 也挂这层（不随 tf 旋转）→ 恒水平；
+    .stage__tf   —— 旋转/缩放层：rotate + scale，transform-origin:center；in-flow 撑起 item 尺寸；
+                   选框/圆点手柄/旋转圆钮挂这层 → 随物件旋转/缩放一起走；
+    .stage__node —— 物件本体（透明抠图 + 跟随轮廓投影）。
+   手势中间态经 rAF 直改对应层的 style.transform（合成层），松手才把值提交进状态。
+   ============================================================ */
+.stage__item {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* 手势进行中才提示合成层（move 改 item、scale/rotate 改 tf），结束即摘掉、不常驻。 */
+.stage__item.is-active {
+  will-change: transform;
+}
+
+.stage__item.is-active .stage__tf {
+  will-change: transform;
+}
+
+.stage__tf {
+  position: relative;
+  transform-origin: center;
+}
+
+/* 摆放的物件：透明抠图 + 跟随轮廓的投影。旋转/缩放交给 .stage__tf，位移交给 .stage__item。
+ * 宽度由 Canvas.tsx 内联 style（按图面百分比 w 折算的 px）定尺，此处仅兜底。 */
+.stage__node {
+  display: block;
+  width: 110px;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none; /* 触摸拖动时不触发页面滚动/缩放手势 */
+  cursor: grab;
+  filter: var(--shadow-item);
+}
+
+.stage__item.is-active .stage__node {
+  cursor: grabbing;
+}
+
+/* 游客模式：物件不可拖动/变换，点一下只弹故事——光标提示为「可点查看」而非抓取。 */
+.stage[data-mode='guest'] .stage__node {
+  cursor: pointer;
+}
+
+/* ============================================================
+   Canva 式选中态手柄（手柄 v2，N3-S1）—— 替代 v1 的「方块＋顶杆⟳」
+   ------------------------------------------------------------
+   · 选框（.stage__frame）+ 四角白圆点（.stage__handle）+ 选框正下方旋转圆钮（.stage__rot）
+     全挂在 .stage__tf 内，随物件旋转/缩放一起走，贴合倾斜后的物件；细框为纯装饰不拦指针。
+   · 「故事/删除」工具条（.stage__toolbar）挂在 .stage__item（不随 tf 旋转）→ 恒水平，悬于选框上方。
+   · 触摸命中区一律 ≥ --h2-hit：圆点视觉尺寸恒 --h2-size，靠 ::after 透明区撑大命中范围（视觉不放大）。
+   逐一对齐 A2-旧信-沉浸.html 与 design.md v2（--sel-line / --h2-* / --glass-*）。
+   ============================================================ */
+
+/* 陶土红细选框（--sel-line） */
+.stage__frame {
+  position: absolute;
+  inset: -3px;
+  border: 1.5px solid var(--sel-line);
+  border-radius: 3px;
+  pointer-events: none;
+  /* 极淡白色描边 + 柔投影，让细框在深浅背景上都读得清（对齐 demo）。 */
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35), 0 2px 10px rgba(20, 12, 4, 0.22);
+}
+
+/* 四角白色圆点手柄（--h2-*：白底 + 细描边 + 柔投影），等比缩放随选框一起走 */
+.stage__handle {
+  position: absolute;
+  width: var(--h2-size);
+  height: var(--h2-size);
+  background: var(--h2-bg);
+  border: 1px solid var(--h2-line);
+  border-radius: 50%;
+  box-shadow: var(--h2-shadow);
+  touch-action: none;
+  z-index: 2;
+}
+
+/* 触摸命中区（≥ --h2-hit）：透明伪元素罩在圆点上，把可点范围撑大而不放大可见圆点。 */
+.stage__handle::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--h2-hit);
+  height: var(--h2-hit);
+  transform: translate(-50%, -50%);
+}
+
+.stage__handle--tl {
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  cursor: nwse-resize;
+}
+.stage__handle--tr {
+  right: 0;
+  top: 0;
+  transform: translate(50%, -50%);
+  cursor: nesw-resize;
+}
+.stage__handle--bl {
+  left: 0;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+  cursor: nesw-resize;
+}
+.stage__handle--br {
+  right: 0;
+  bottom: 0;
+  transform: translate(50%, 50%);
+  cursor: nwse-resize;
+}
+
+/* 选框正下方旋转圆钮（真旋转图标 SVG）：白底圆钮，26px 本身即满足 --h2-hit 命中区。
+ * 挂在 .stage__tf 内 → 随物件旋转/缩放一起走，恒在选框「正下方」。 */
+.stage__rot {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  margin-top: 12px; /* 与选框下缘留一口气（frame inset -3px，实际间隙 ~9px） */
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--h2-line);
+  border-radius: 50%;
+  background: var(--h2-bg);
+  color: #5c5244;
+  cursor: grab;
+  box-shadow: var(--h2-shadow);
+  transform: translateX(-50%);
+  touch-action: none;
+  z-index: 2;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.stage__rot:hover {
+  color: var(--color-accent);
+}
+
+.stage__rot svg {
+  width: 14px;
+  height: 14px;
+}
+
+.stage__item.is-active .stage__rot {
+  cursor: grabbing;
+}
+
+/* —— 选中物件上方的浮动毛玻璃小工具条（故事 / 删除，真 SVG 图标） ——
+ * 挂在 .stage__item（位移层，不随 .stage__tf 旋转/缩放）→ 恒水平；悬于选框上方（bottom:100%）。
+ * 玻璃材质对齐 --glass-*；为置顶/复制等后续操作留口子（加 button 即可）。 */
+.stage__toolbar {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  margin-bottom: 12px; /* 悬于选框上方，留一口气 */
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--glass-bg);
+  border: var(--rule) solid var(--glass-line);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.05);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.05);
+  box-shadow: var(--shadow-glass);
+  white-space: nowrap;
+  z-index: 5;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+/* 任一手势进行中（拖/缩/转）：工具条淡出让路，不接指针（松手复现，位置随之更新）。 */
+.stage__toolbar.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stage__toolbar-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #5c5244;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: none;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.stage__toolbar-btn:hover {
+  background: var(--color-accent-tint);
+  color: var(--color-accent);
+}
+
+.stage__toolbar-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.stage__toolbar-div {
+  width: 1px;
+  height: 18px;
+  background: var(--glass-line);
+}
+
+/* ============================================================
+   浮层玻璃四件套（N2-S2）：品牌章 / 模式开关＋隐藏界面钮 / 场景条 / 物件 dock
+   —— 统一毛玻璃材质 + 拖动让路铁律 + 隐藏界面 ——
+   逐一对齐 A2-旧信-沉浸.html 与 design.md v2（--glass-* / --shadow-glass）。
+   ============================================================ */
+
+/* 浮层材质：所有常驻 UI 一律玻璃底——半透明奶油 + backdrop-blur + 玻璃描边 + 玻璃阴影。 */
+.glass {
+  background: var(--glass-bg);
+  border: var(--rule) solid var(--glass-line);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.05);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.05);
+  box-shadow: var(--shadow-glass);
+}
+
+/* 浮层标记 + 让路/收起的统一驱动：
+ *  - .chrome 只负责登记「这是浮层」并给 opacity 一个过渡（定位仍由各浮层自管）。
+ *  - 拖动让路铁律：拖动物件时 .app.is-dragging 命中，全部浮层淡出至近隐形且不接指针——
+ *    全视口皆可放置（物件能落到浮层平时覆盖的区域，如画面最顶部）；松手浮回。
+ *  - 隐藏界面：.app.ui-hidden 命中，除眼睛（.eye-keeper）外全部浮层收起，眼睛留一枚 .4 幽灵钮。 */
+.chrome {
+  transition: opacity 0.22s var(--ease-out);
+}
+
+.app.is-dragging .chrome {
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.app.ui-hidden .chrome:not(.eye-keeper) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app.ui-hidden .eye-keeper {
+  opacity: 0.4;
+}
+
+/* 报头：顶部透明容器（不接指针，空白处透传给房间），品牌章 + 右上控件组各自浮块自恢复可点。 */
+.top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  pointer-events: none;
+}
+
+/* 品牌章（左上·玻璃浮块）：衬线陈列室名 + 大写小标。 */
+.brand {
+  pointer-events: auto;
+  padding: 9px 16px 8px;
+  border-radius: var(--radius-lg);
+  color: var(--color-ink);
+}
+
+.brand h1 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--text-brand);
+  letter-spacing: 0.5px;
+  line-height: 1.15;
+}
+
+.brand small {
+  display: block;
+  font-family: var(--font-sans);
+  /* 工艺底线：UI 标签字号不低于 --text-label-min（11px）。 */
+  font-size: var(--text-label-min);
+  letter-spacing: 3px;
+  color: var(--color-ink-soft);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* 右上控件组：模式开关 + 隐藏界面钮。容器承 .top 的不接指针，内部两枚浮块各自恢复可点。 */
+.ctl {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* 模式开关（玻璃胶囊）：内层激活段填充陶土红、字反白。 */
+.seg {
+  pointer-events: auto;
+  display: flex;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  flex: none;
+}
+
+.seg button {
+  border: 0;
+  background: transparent;
+  color: var(--color-ink-soft);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  padding: 6px 15px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.seg button.on {
+  background: var(--color-accent);
+  color: var(--color-card);
+}
+
+/* 隐藏界面钮（眼睛·玻璃圆钮）：一键收起全部浮层纯看房间；.eye-keeper 令其在收起态留作幽灵钮。 */
+.eye {
+  pointer-events: auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #5c5244;
+  padding: 0;
+  transition: color var(--dur-fast) var(--ease-out), opacity 0.22s var(--ease-out);
+}
+
+.eye:hover {
+  color: var(--color-accent);
+}
+
+.eye svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* 场景条（底部居中·玻璃浮块）：衬线 chip 胶囊行。 */
+.scenes {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-md);
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: calc(100vw - 2 * var(--space-lg));
+  padding: 7px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.scenes .lbl {
+  /* 工艺底线：分区标签字号不低于 --text-label-min（11px）。 */
+  font-size: var(--text-label-min);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  margin: 0 4px 0 6px;
+}
+
+/* 场景 chip：衬线字胶囊。透明底浮在玻璃上；激活=陶土红描边+浅底。 */
+.chip {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  padding: 6px 15px;
+  border: var(--rule) solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+
+.chip:hover {
+  color: var(--color-ink);
+}
+
+.chip.on {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-tint);
+}
+
+/* ＋新场景：虚线灰 chip；用满 3 个背景后置灰、不可点。 */
+.chip.add {
+  border-style: dashed;
+  border-color: var(--color-line);
+  color: var(--color-accent);
+  background: transparent;
+}
+
+.chip.add.is-disabled {
+  color: #b9ad97;
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.add-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+/* “素材已用完”常驻提示（背景不可重复、上限 3 的可视化），浮在 chip 上方。 */
+.exhausted {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  /* 工艺底线：提示标签字号不低于 --text-label-min（11px）。 */
+  font-size: var(--text-label-min);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: 3px 8px;
+  border-radius: 4px;
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+/* 背景选择 picker：场景条在底部，picker 向上弹出（不越出视口底缘）。 */
+.bg-picker {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  top: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  min-width: 200px;
+  background: var(--color-card);
+  border: var(--rule) solid var(--color-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-float);
+  padding: var(--space-sm);
+}
+
+.bg-picker__hint {
+  font-size: var(--text-label-min);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  padding: 2px 4px 8px;
+}
+
+.bg-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 6px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.bg-option:hover {
+  background: var(--color-accent-tint);
+}
+
+.bg-option img {
+  width: 46px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: var(--rule) solid var(--color-line);
+}
+
+.bg-option span {
+  font-family: var(--font-serif);
+  font-size: var(--text-body);
+  color: var(--color-ink);
+}
+
+/* ------------------------------------------------------------
+   物件 dock（左侧·玻璃浮块，可收合成贴边把手）
+   ------------------------------------------------------------
+   结构：.dock = [ .dock-panel（内容：分区标题 + 缩略卡纵列） | .dock-tab（右缘把手） ]。
+   视觉居中补偿（把手造成的不对称）：
+    - dock 锚 left + top:50% + translateY(-50%)：展开的高面板与收合后的矮把手都绕**同一条竖直中线**
+      伸缩——把手收合后仍纵向居中，不因面板消失而偏上/偏下（补偿把手↔面板尺寸差在纵轴上的不对称）。
+    - 把手独占右缘一栏（border-left 分隔、绝不压到内容），面板内容整列水平居中（dock-head text-align:center、
+      缩略卡满栏居中）——把手的横向单侧突出不挤偏面板内容。
+   ------------------------------------------------------------ */
+.dock {
+  position: absolute;
+  left: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: stretch;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.dock-panel {
+  display: flex;
+  flex-direction: column;
+  width: 116px;
+  max-height: min(72vh, calc(100vh - 132px));
+}
+
+.dock.closed .dock-panel {
+  display: none;
+}
+
+.dock-head {
+  padding: 10px 12px 7px;
+  text-align: center;
+  font-family: var(--font-sans);
+  /* 工艺底线：分区标题字号不低于 --text-label-min（11px）。 */
+  font-size: var(--text-label-min);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  border-bottom: var(--rule) solid var(--glass-line);
+}
+
+.dock-list {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.dock-list::-webkit-scrollbar {
+  width: 0;
+}
+
+/* 贴边把手：右缘竖条，一点即收/展。收起态放大成 38×64 竖把手贴左缘、chevron 翻向。 */
+.dock-tab {
+  flex: none;
+  width: 26px;
+  border: 0;
+  border-left: var(--rule) solid var(--glass-line);
+  background: transparent;
+  cursor: pointer;
+  color: #5c5244;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.dock-tab:hover {
+  color: var(--color-accent);
+}
+
+.dock-tab svg {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.dock.closed {
+  border-radius: var(--radius-md);
+}
+
+.dock.closed .dock-tab {
+  width: 38px;
+  height: 64px;
+  border-left: 0;
+}
+
+.dock.closed .dock-tab svg {
+  transform: rotate(180deg);
+}
+
+/* 缩略卡：奶油卡片、透明抠图 contain 居中；任意方向触摸都交给「拖入画布」（touch-action:none）。 */
+.thumb {
+  display: block;
+  position: relative; /* 用户件删除入口（.thumb-del）与就地确认（.thumb-confirm）的定位参照 */
+  width: 100%;
+  background: var(--color-card);
+  border: var(--rule) solid var(--color-line);
+  border-radius: var(--radius-sm);
+  padding: 8px 6px 6px;
+  text-align: center;
+  cursor: grab;
+  touch-action: none;
+  transition: transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.thumb:hover:not(.is-disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.thumb.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.thumb .itm {
+  display: block;
+  width: 100%;
+  height: 48px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.thumb span {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 12px;
+  margin-top: 4px;
+  color: var(--color-ink-soft);
+}
+
+/* 物件名（可就地编辑）：点名字进入编辑；hover 提示可改（陶土红 + 文本光标）。 */
+.thumb-name {
+  cursor: text;
+  border-radius: var(--radius-sm);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.thumb:hover:not(.is-disabled) .thumb-name {
+  color: var(--color-ink);
+}
+
+.thumb-name:hover {
+  color: var(--color-accent);
+}
+
+/* 物件名输入框：贴合缩略卡、承接名字位（serif 小字，陶土红聚焦描边）。 */
+.thumb-name-input {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 1px 4px;
+  box-sizing: border-box;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 12px;
+  color: var(--color-ink);
+  background: var(--color-card);
+  border: var(--rule) solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  outline: none;
+}
+
+/* ============================================================
+   用户件删除入口（U3-S1·平权收尾）——只挂在 source:'user' 的缩略卡上（内置 14 件无此入口）。
+   垃圾桶钮浮卡片右上角（毛玻璃底、陶土红 hover）；点它就地弹一句话玻璃确认（删除/取消），
+   不弹大警告框，与场景删除同款克制语气。逐一守「旧信·沉浸」DNA（毛玻璃 / 陶土红 / 字号 ≥ 下限）。
+   ============================================================ */
+.thumb-del {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 3;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--rule) solid var(--glass-line);
+  border-radius: 50%;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  box-shadow: var(--shadow-glass);
+  /* 常驻可见但克制（touch 端无 hover 也可发现）；hover/聚焦时强调为陶土红。 */
+  opacity: 0.62;
+  transition: opacity var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.thumb:hover .thumb-del,
+.thumb-del:focus-visible {
+  opacity: 1;
+}
+
+.thumb-del:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.thumb-del:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.thumb-del svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* 就地删除确认（一句话，玻璃层覆在缩略卡内）——不弹大警告框、不逃出 dock（不被 overflow 裁）。 */
+.thumb-confirm {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.thumb-confirm__msg {
+  font-family: var(--font-serif);
+  font-size: 12px;
+  line-height: 1.25;
+  color: var(--color-ink);
+}
+
+.thumb-confirm__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.thumb-confirm__yes,
+.thumb-confirm__no {
+  font-family: var(--font-sans);
+  /* 工艺底线：UI 按钮字号不低于 --text-label-min（11px）。 */
+  font-size: var(--text-label-min);
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  border: var(--rule) solid var(--color-line);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.thumb-confirm__yes {
+  background: var(--color-accent);
+  color: var(--color-card);
+  border-color: var(--color-accent);
+}
+
+.thumb-confirm__yes:hover {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-soft);
+}
+
+.thumb-confirm__no {
+  background: var(--color-card);
+  color: var(--color-ink-soft);
+}
+
+.thumb-confirm__no:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ============================================================
+   上传入口 + 预览确认（U2-S1·上传管线主链路）
+   —— dock 顶部「＋」卡（陶土红虚线，与缩略卡同宽同底）；预览为满屏 scrim + 毛玻璃奶油弹窗，
+      createPortal 送 body 顶层，逃出 dock 的 transform/overflow 裁剪。逐一对齐「旧信·沉浸」DNA。
+   ============================================================ */
+/* ＋卡：与 .thumb 同宽同圆角同底，虚线陶土红边示意「添加」。 */
+.upload-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+  padding: 10px 6px 8px;
+  background: var(--color-card);
+  border: 1.4px dashed var(--color-accent-soft);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.upload-add:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-card);
+}
+
+.upload-add:disabled {
+  cursor: progress;
+  opacity: 0.85;
+}
+
+.upload-add__icon {
+  width: 22px;
+  height: 22px;
+}
+
+.upload-add__label {
+  font-family: var(--font-sans);
+  font-size: var(--text-label-min);
+  letter-spacing: 0.5px;
+  color: var(--color-ink-soft);
+}
+
+/* 处理中转圈：陶土红细环。 */
+.upload-add__spin {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--color-line);
+  border-top-color: var(--color-accent);
+  animation: upload-spin 0.7s linear infinite;
+}
+
+@keyframes upload-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 配额计数「已传 N/50」（U3-S2）：dock 顶部常驻，随上传/删除实时更新。
+   与分区标题同族的沉静 UI 标签——sans、字号守 --text-label-min（11px）下限、居中、灰褐。 */
+.upload-quota {
+  font-family: var(--font-sans);
+  font-size: var(--text-label-min);
+  letter-spacing: 0.6px;
+  text-align: center;
+  color: var(--color-ink-soft);
+  padding: 1px 0 2px;
+}
+
+/* 上传入口·已满阻止态（U3-S2）：陶土红虚线转为静默的中性描边、不再邀请点击，
+   与常态形成明确「此路暂不通」对比；仍守既有卡片形制（旧信·沉浸）。 */
+.upload-add.is-full {
+  cursor: not-allowed;
+  border-style: solid;
+  border-color: var(--glass-line);
+  background: var(--glass-bg-soft);
+  color: var(--color-ink-soft);
+  opacity: 1;
+}
+
+.upload-add.is-full:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.upload-add.is-full .upload-add__icon {
+  opacity: 0.5;
+}
+
+/* 已满说明：入口处常驻的一句阻止说明（在选图之前就告知）。字号守 11px 下限、居中留白。 */
+.upload-full {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-label-min);
+  line-height: 1.45;
+  text-align: center;
+  color: var(--color-ink-soft);
+  padding: 2px 4px 0;
+}
+
+/* 预览遮罩：满屏压暗，托起居中弹窗（z 高于全部浮层、低于 save-error）。 */
+.upload-preview-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  background: rgba(34, 22, 10, 0.4);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+/* 预览弹窗：毛玻璃奶油底、陶土红描边（对齐 .story）。 */
+.upload-preview {
+  position: relative;
+  width: min(92vw, 340px);
+  max-height: calc(100vh - 2 * var(--space-md));
+  overflow-y: auto;
+  padding: 22px 20px 20px;
+  background: var(--color-popup);
+  border: var(--rule) solid var(--color-popup-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-float);
+  -webkit-backdrop-filter: blur(9px) saturate(1.06);
+  backdrop-filter: blur(9px) saturate(1.06);
+}
+
+.upload-preview__close {
+  position: absolute;
+  right: 11px;
+  top: 11px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: var(--rule) solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.4);
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.upload-preview__close svg {
+  width: 13px;
+  height: 13px;
+}
+
+.upload-preview__close:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.upload-preview__kicker {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--text-label-min);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 12px;
+  padding-right: 28px;
+}
+
+/* 预览图框：奶油底、contain 居中，完整看清成品（含透明抠图将来）。 */
+.upload-preview__frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background-color: rgba(239, 230, 212, 0.55);
+  border: var(--rule) solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.upload-preview__img {
+  display: block;
+  max-width: 100%;
+  max-height: 46vh;
+  object-fit: contain;
+}
+
+.upload-preview__namewrap {
+  display: block;
+  margin-top: 14px;
+}
+
+.upload-preview__namecap {
+  display: block;
+  margin-bottom: 5px;
+  font-family: var(--font-sans);
+  font-size: var(--text-label-min);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.upload-preview__name {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  font-family: var(--font-serif);
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  background: var(--color-card);
+  border: var(--rule) solid var(--color-line);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.upload-preview__name:focus {
+  border-color: var(--color-accent);
+}
+
+.upload-preview__meta {
+  margin: 8px 0 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-meta);
+  color: var(--color-ink-soft);
+}
+
+.upload-preview__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.upload-preview__btn {
+  padding: 7px 15px;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  border: var(--rule) solid var(--color-line);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.upload-preview__btn--ghost {
+  background: transparent;
+  color: var(--color-ink-soft);
+}
+
+.upload-preview__btn--ghost:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.upload-preview__btn--save {
+  background: var(--color-accent);
+  color: var(--color-card);
+  border-color: var(--color-accent);
+}
+
+.upload-preview__btn--save:hover {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-soft);
+}
+
+/* 上传失败提示：同 save-error 手感，固定顶部居中。 */
+.upload-error {
+  position: fixed;
+  top: var(--space-md);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(92vw, 480px);
+  padding: 10px 12px 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  border: var(--rule) solid var(--color-accent);
+  box-shadow: var(--shadow-float);
+}
+
+.upload-error__msg {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.45;
+  color: var(--color-ink);
+}
+
+.upload-error__close {
+  flex: none;
+  padding: 5px 13px;
+  font-family: var(--font-sans);
+  font-size: var(--text-label-min);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-card);
+  border: var(--rule) solid var(--color-accent);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   管理与命名就地编辑（N3-S2）：陈列室名（品牌章）/ 场景名（chip）/ 场景删除次级入口
+   —— 统一手感：点进去改、回车/失焦即存、Esc 撤销；删除一句话就地确认，不弹大警告框 ——
+   ============================================================ */
+
+/* 陈列室名（品牌章）：点标题进入编辑；hover 提示可改。 */
+.brand__name {
+  cursor: text;
+  border-radius: var(--radius-sm);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.brand__name:hover {
+  color: var(--color-accent);
+}
+
+.brand__name:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* 陈列室名输入框：承接 h1 位，同 serif 展示字号（--text-brand），陶土红聚焦描边。 */
+.brand__name-input {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--text-brand);
+  letter-spacing: 0.5px;
+  line-height: 1.15;
+  color: var(--color-ink);
+  background: var(--color-card);
+  border: var(--rule) solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  padding: 0 6px;
+  outline: none;
+  width: 8.5em;
+  max-width: 60vw;
+}
+
+/* chip 容器：承载 chip 本体 + 删除次级入口 + 就地确认气泡（三者绝对定位相对它）。 */
+.chip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 场景名输入框（沿用 .chip 的 serif/胶囊底，补可编辑观感）。 */
+.chip.chip-input {
+  background: var(--color-card);
+  border-color: var(--color-accent);
+  color: var(--color-ink);
+  outline: none;
+  width: 6.5em;
+  max-width: 46vw;
+  text-align: center;
+}
+
+/* 删除次级入口（×）：激活 chip 右上角浮出的小圆钮，克制不喧宾夺主。 */
+.chip-del {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--rule) solid var(--glass-line);
+  border-radius: 50%;
+  background: var(--color-card);
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  box-shadow: var(--shadow-glass);
+  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.chip-del:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.chip-del svg {
+  width: 11px;
+  height: 11px;
+}
+
+/* 就地删除确认（一句话，玻璃小气泡上浮于 chip 上方）——不弹大警告框。 */
+.chip-confirm {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.chip-confirm__msg {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  color: var(--color-ink);
+}
+
+.chip-confirm__yes,
+.chip-confirm__no {
+  font-family: var(--font-sans);
+  font-size: var(--text-label-min);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  border: var(--rule) solid var(--color-line);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.chip-confirm__yes {
+  background: var(--color-accent);
+  color: var(--color-card);
+  border-color: var(--color-accent);
+}
+
+.chip-confirm__yes:hover {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-soft);
+}
+
+.chip-confirm__no {
+  background: transparent;
+  color: var(--color-ink-soft);
+}
+
+.chip-confirm__no:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* dock 拖出的跟手幽灵：视口定位（fixed 逃逸 dock overflow 裁剪），位置只经 rAF 直改 transform。
+ * 非 .chrome：拖动让路时全部浮层淡出，幽灵仍需清晰可见跟着指针。 */
+.tray__ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  width: 88px;
+  opacity: 0.9;
+  pointer-events: none;
+  filter: var(--shadow-item);
+}
+
+.tray__ghost img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ============================================================
+   物件故事弹窗（M3-S2 · 半透明奶油弹窗）
+   浮于房间之上、不占布局宽度：绝对定位于满屏 stage 内右侧、垂直居中。
+   逐一对齐 taste/A-旧信.html 的 .popup 与 tokens.css。
+   ============================================================ */
+.story {
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 290px;
+  max-height: calc(100% - 28px);
+  overflow-y: auto;
+  padding: 22px 20px 20px;
+  background: var(--color-popup);
+  border: var(--rule) solid var(--color-popup-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-float);
+  backdrop-filter: blur(9px) saturate(1.06);
+  -webkit-backdrop-filter: blur(9px) saturate(1.06);
+  z-index: 40;
+}
+
+/* 关闭钮（右上角圆钮·真 SVG 叉号，自 v2 起替代字符 ✕） */
+.story__close {
+  position: absolute;
+  right: 11px;
+  top: 11px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: var(--rule) solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.4);
+  color: var(--color-ink-soft);
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.story__close svg {
+  width: 13px;
+  height: 13px;
+}
+
+.story__close:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* 「它的故事」kicker */
+.story__kicker {
+  display: block;
+  font-family: var(--font-sans);
+  /* 工艺底线：UI 标签字号不低于 --text-label-min（11px）。 */
+  font-size: var(--text-label-min);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+  padding-right: 28px; /* 让开右上角 ✕ */
+}
+
+/* 衬线标题（物件名） */
+.story__name {
+  margin: 0 0 3px;
+  font-family: var(--font-serif);
+  font-size: var(--text-title);
+  font-weight: 400;
+  color: var(--color-ink);
+}
+
+/* meta 行（陈列场景） */
+.story__meta {
+  margin: 0 0 14px;
+  font-family: var(--font-sans);
+  font-size: var(--text-meta);
+  color: var(--color-ink-soft);
+}
+
+/* 故事正文（游客只读展示） */
+.story__body {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--text-body);
+  line-height: 1.72;
+  color: #463d32;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.story__body.is-empty {
+  color: var(--color-ink-soft);
+  font-style: italic;
+}
+
+/* 故事输入（编辑模式） */
+.story__input {
+  width: 100%;
+  min-height: 104px;
+  resize: vertical;
+  padding: var(--space-sm);
+  font-family: var(--font-serif);
+  font-size: var(--text-body);
+  line-height: 1.7;
+  color: var(--color-ink);
+  background: var(--color-card);
+  border: var(--rule) solid var(--color-line);
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+}
+
+.story__input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+/* 「原始照片」缩略区（顶部陶土红虚线分隔） */
+.story__orig {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--color-popup-line);
+}
+
+.story__orig-cap {
+  margin: 0 0 8px;
+  font-family: var(--font-sans);
+  /* 工艺底线：UI 标签字号不低于 --text-label-min（11px）。 */
+  font-size: var(--text-label-min);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.story__photo {
+  display: block;
+  width: 100%;
+  height: 110px;
+  object-fit: contain;
+  background-color: rgba(239, 230, 212, 0.55);
+  border: var(--rule) solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+/* 编辑模式操作区 */
+.story__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.story__btn {
+  padding: 7px 15px;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  border: var(--rule) solid var(--color-line);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.story__btn--ghost {
+  background: transparent;
+  color: var(--color-ink-soft);
+}
+
+.story__btn--ghost:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.story__btn--save {
+  background: var(--color-accent);
+  color: var(--color-card);
+  border-color: var(--color-accent);
+}
+
+.story__btn--save:hover {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-soft);
+}
+
+/* ============================================================
+   存储写入失败提示（U1-S2·终结静默失败）
+   —— saveState 冒泡的写入错误在此弹一条明确提示，压所有浮层之上、固定顶部居中 ——
+   终结「提示成功、刷新就没」：写入失败时用户即刻可见，而非无声吞掉数据。
+   ============================================================ */
+.save-error {
+  position: fixed;
+  top: var(--space-md);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(92vw, 480px);
+  padding: 10px 12px 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  border: var(--rule) solid var(--color-accent);
+  box-shadow: var(--shadow-float);
+}
+
+.save-error__icon {
+  display: flex;
+  flex: none;
+  color: var(--color-accent);
+}
+
+.save-error__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.save-error__msg {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.45;
+  color: var(--color-ink);
+}
+
+.save-error__close {
+  flex: none;
+  margin-left: 2px;
+  padding: 5px 13px;
+  font-family: var(--font-sans);
+  font-size: var(--text-label-min);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-card);
+  border: var(--rule) solid var(--color-accent);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.save-error__close:hover {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-soft);
+}
+
+/* ============================================================
+   响应式（横屏手机等矮/窄视口）
+   —— dock 默认收合归 N2-S2；本 sprint 只做「不溢出、不错乱」的收紧 ——
+   ============================================================ */
+
+/* 矮视口（横屏手机）：dock 面板收窄、缩略图压小、纵向滚动。
+ * 面板高度沿用默认 min(72vh, 100vh-132px) 的自适应上限——纵向居中后上下各留 66px，
+ * 不吃满可用高（避免高面板顶到品牌章；把手收合把手仍纵向居中）。 */
+@media (max-height: 560px) {
+  .dock-panel {
+    width: 100px;
+  }
+
+  .dock-head {
+    padding: 7px 10px 5px;
+  }
+
+  .dock-list {
+    padding: 8px;
+    gap: 7px;
+  }
+
+  .thumb {
+    padding: 6px 5px 5px;
+  }
+
+  .thumb .itm {
+    height: 40px;
+  }
+
+  .thumb span {
+    margin-top: 3px;
+    font-size: 11px;
+  }
+
+  /* 上传预览弹窗·矮视口收紧（横屏手机 844×390）：预览图偏大（46vh≈179px）叠加名字/元信息后，
+     整窗高度会超过 max-height:calc(100vh-2*space-md)（390 视口下≈358px）而把「确认入库/取消」操作区
+     顶到弹窗滚动线以下——用户打开预览即见不到主操作、须滚动才够得着。矮视口下缩小预览图、收紧纵向
+     间距，让预览图 + 名字输入 + 操作区一屏内全部落位、无需滚动。仍守毛玻璃奶油弹窗 / 陶土红描边 /
+     字号不低于 --text-label-min（旧信·沉浸 DNA 不变，只改矮视口下的纵向尺度）。 */
+  .upload-preview {
+    padding: 16px 18px 16px;
+  }
+
+  .upload-preview__kicker {
+    margin-bottom: 8px;
+  }
+
+  .upload-preview__frame {
+    padding: 8px;
+  }
+
+  .upload-preview__img {
+    max-height: 30vh;
+  }
+
+  .upload-preview__namewrap {
+    margin-top: 10px;
+  }
+
+  .upload-preview__meta {
+    margin-top: 6px;
+  }
+
+  .upload-preview__actions {
+    margin-top: 12px;
+  }
+}
+
+/* 窄视口（横屏手机一套交互）：报头/场景条/dock 收紧；故事弹窗贴底近满宽。
+ * 手柄命中区无需在此放大——圆点视觉尺寸恒 --h2-size，命中区已由 .stage__handle::after 恒撑到
+ * --h2-hit（26px），旋转圆钮本身 26px、工具条按钮 32px 亦均 ≥ --h2-hit，各视口通吃。 */
+@media (max-width: 880px) {
+  .top {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .brand h1 {
+    font-size: 16px;
+  }
+
+  .dock {
+    left: var(--space-sm);
+  }
+
+  .dock-panel {
+    width: 96px;
+  }
+
+  .story {
+    right: 12px;
+    left: 12px;
+    width: auto;
+    top: auto;
+    bottom: 12px;
+    transform: none;
+    max-height: calc(100% - 24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.001ms !important;
+  }
+}

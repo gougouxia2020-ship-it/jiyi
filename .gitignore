@@ -1,0 +1,28 @@
+.opc/artifacts/
+
+# 每个里程碑的构建产物快照，与 dist 内容重复，代码在手可随时重建
+deliverables/
+
+# Node / Vite
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/

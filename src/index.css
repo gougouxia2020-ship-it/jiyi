@@ -1,0 +1,36 @@
+@import './styles/tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* #root 是 body（display:flex）下的唯一 flex 子项：不给宽度会按内容 shrink-to-fit，
+ * 让 .app 的 width:100%/max-width:1180px 从未真正撑满过（PC 视口下 .app 实测仅约
+ * 490px，撑不到设计稿 A-旧信.html 的满宽 Workbench）。显式 100% 让它按 body 可用宽度
+ * 走，`.app` 的 width:100%/max-width 才对着正确的包含块解析——对齐 A-旧信.html 里
+ * `.app` 直接是 body 的 flex 子项（无中间层）时的宽度表现。（M1 起即存在，M2-S2/M3-S2
+ * 两轮已诊断根因、因超出各自 sprint 范围搁置；M4 收口按「整体视觉还原旧信 DNA」就地修。）*/
+#root {
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-sand);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  /* 满屏沉浸外壳（N2-S1）：外壳 .app 固定铺满视口，页面本身不滚动——
+   * 双轴 overflow:hidden，确保任意视口下都无横向（也无纵向）滚动条。 */
+  overflow: hidden;
+}
